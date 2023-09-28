@@ -1,6 +1,6 @@
 {
-  "public": "dist",
   "hosting": {
+    "public": "dist",
     "rewrites": [
       {
         "source": "**",
