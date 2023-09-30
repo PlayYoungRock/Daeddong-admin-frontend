@@ -15,7 +15,7 @@ jobs:
       - name: Install firebase tools
         run: |
           sudo npm install -g firebase-tools
-          firebase use daeddong-admin --token ${{secrets.FIREBASE_TOKEN}}
+          firebase use daeddong-admin-dev --token ${{secrets.FIREBASE_TOKEN}}
 
       - name: Build
       - run: yarn install && yarn build
