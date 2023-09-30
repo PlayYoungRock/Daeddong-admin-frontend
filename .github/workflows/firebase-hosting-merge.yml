@@ -21,9 +21,9 @@ jobs:
       - run: yarn install && yarn build
 
       - name: Deploy to dev
-          if: github.ref == 'refs/heads/dev'
+          if: github.ref == 'refs/heads/main'
           run: firebase deploy --only hosting:dev --non-interactive --token ${{secrets.FIREBASE_TOKEN}} -m "RunID ${{ github.run_id }} Commit SHA ${{ github.sha }}"
 
       - name: Deploy to production
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/production'
         run: firebase deploy --only hosting:prod --non-interactive --token ${{secrets.FIREBASE_TOKEN}} -m "RunID ${{ github.run_id }} Commit SHA ${{ github.sha }}"
