@@ -18,12 +18,14 @@ jobs:
       - name: Set Branch-Specific Environment Variable
         id: environment_key
         run: |
-          if [ github.ref == "refs/heads/main" ]; then
+          if [ github.ref == "refs/heads/main" ] 
+          then
             FIREBASE_SERVICE_ACCOUNT=secrets.FIREBASE_SERVICE_ACCOUNT_DAEDDONG_ADMIN_DEV
             PROJECT_ID=daeddong-admin-dev
           else
             FIREBASE_SERVICE_ACCOUNT=secrets.FIREBASE_SERVICE_ACCOUNT_DAEDDONG_ADMIN_PRODUCTION
             PROJECT_ID=daeddong-admin-production
+          fi
 
       - name: test branch
       - run: |
