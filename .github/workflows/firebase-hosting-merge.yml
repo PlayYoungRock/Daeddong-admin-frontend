@@ -26,7 +26,9 @@ jobs:
             PROJECT_ID=daeddong-admin-production
 
       - name: test branch
-      - run: echo "$github.ref"
+      - run: |
+          BRANCH_NAME="${{ github.ref }}"
+          echo "branch name $BRANCH_NAME"
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
