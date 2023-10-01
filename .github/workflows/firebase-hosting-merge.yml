@@ -25,6 +25,7 @@ jobs:
             FIREBASE_SERVICE_ACCOUNT=secrets.FIREBASE_SERVICE_ACCOUNT_DAEDDONG_ADMIN_PRODUCTION
             PROJECT_ID=daeddong-admin-production
 
+      - name: test branch
       - run: echo "$github.ref"
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
