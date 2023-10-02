@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "daeddong-admin-dev",
+    "production": "daeddong-admin-production"
+  }
+}
