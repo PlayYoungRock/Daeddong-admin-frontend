@@ -16,8 +16,8 @@ jobs:
       - run: yarn install && yarn build
 
       - name: Set Branch-Specific Environment Variable
-        id: environment_key
-        run: |
+      - id: environment_key
+      - run: |
           if [ github.ref == "refs/heads/main" ] 
           then
             FIREBASE_SERVICE_ACCOUNT=secrets.FIREBASE_SERVICE_ACCOUNT_DAEDDONG_ADMIN_DEV
@@ -26,11 +26,6 @@ jobs:
             FIREBASE_SERVICE_ACCOUNT=secrets.FIREBASE_SERVICE_ACCOUNT_DAEDDONG_ADMIN_PRODUCTION
             PROJECT_ID=daeddong-admin-production
           fi
-
-      - name: test branch
-      - run: |
-          BRANCH_NAME="${{ github.ref }}"
-          echo "branch name $BRANCH_NAME"
 
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
