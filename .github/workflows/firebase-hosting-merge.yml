@@ -4,17 +4,36 @@
 name: Deploy to Firebase Hosting on merge
 "on":
   push:
-    branches:
-      - main
+    branches: [main, production]
+
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+
+      - name: Build
       - run: yarn install && yarn build
+
+      - name: Set Branch-Specific Environment Variable
+        id: environment_key
+        run: |
+          if [ github.ref == "refs/heads/main" ] 
+          then
+            FIREBASE_SERVICE_ACCOUNT=secrets.FIREBASE_SERVICE_ACCOUNT_DAEDDONG_ADMIN_DEV
+            PROJECT_ID=daeddong-admin-dev
+          else
+            FIREBASE_SERVICE_ACCOUNT=secrets.FIREBASE_SERVICE_ACCOUNT_DAEDDONG_ADMIN_PRODUCTION
+            PROJECT_ID=daeddong-admin-production
+          fi
+
+      - name: test branch
+      - run: |
+          BRANCH_NAME="${{ github.ref }}"
+          echo "branch name $BRANCH_NAME"
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
-          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_DAEDDONG_ADMIN_DEV }}"
-          channelId: live
-          projectId: daeddong-admin-dev
+          firebaseServiceAccount: "${{ steps.environment_key.outputs.FIREBASE_SERVICE_ACCOUNT }}"
+          projectId: "${{ steps.environment_key.outputs.PROJECT_ID }}"
