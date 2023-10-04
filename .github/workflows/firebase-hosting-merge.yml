@@ -11,17 +11,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - run: yarn install && yarn build
-      
-      - name: Install firebase tools
-        run: |
-          sudo npm install -g firebase-tools
-          firebase use daeddong-admin --token ${{secrets.FIREBASE_TOKEN}}
 
       - name: Build website
         run: |
-          yarn
+          yarn install
           yarn build
+
+      - name: Install firebase tools
+        run: |
+          yarn global add firebase-tools
+          firebase use daeddong-admin --token ${{secrets.FIREBASE_TOKEN}}
 
       - name: Deploy to staging site
         if: github.ref == 'refs/heads/dev'
