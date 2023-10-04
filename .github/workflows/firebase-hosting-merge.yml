@@ -20,12 +20,12 @@ jobs:
       - name: Install firebase tools
         run: |
           yarn global add firebase-tools
-          firebase use daeddong-admin --token ${{secrets.FIREBASE_TOKEN}}
+          firebase use daeddong-admin ${{secrets.FIREBASE_TOKEN}}
 
       - name: Deploy to staging site
         if: github.ref == 'refs/heads/dev'
-        run: firebase deploy --only hosting:dev --non-interactive --token ${{secrets.FIREBASE_TOKEN}} -m "RunID ${{ github.run_id }} Commit SHA ${{ github.sha }}"
+        run: firebase deploy --only hosting:dev --non-interactive ${{secrets.FIREBASE_TOKEN}} -m "RunID ${{ github.run_id }} Commit SHA ${{ github.sha }}"
 
       - name: Deploy to production site
         if: github.ref == 'refs/heads/master'
-        run: firebase deploy --only hosting:prod --non-interactive --token ${{secrets.FIREBASE_TOKEN}} -m "RunID ${{ github.run_id }} Commit SHA ${{ github.sha }}"
+        run: firebase deploy --only hosting:prod --non-interactive ${{secrets.FIREBASE_TOKEN}} -m "RunID ${{ github.run_id }} Commit SHA ${{ github.sha }}"
