@@ -1,6 +1,17 @@
 {
   "projects": {
-    "default": "daeddong-admin-dev",
-    "production": "daeddong-admin-production"
+    "default": "daeddong-admin"
+ },
+ "targets": {
+    "daeddong-admin": {
+      "hosting": {
+        "dev": [
+          "daeddong-admin-dev"
+        ],
+        "prod": [
+          "daeddong-admin-production"
+        ]
+      }
+    }
   }
 }
