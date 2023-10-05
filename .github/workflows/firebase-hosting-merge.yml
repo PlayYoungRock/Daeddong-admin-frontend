@@ -10,22 +10,36 @@ jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: actions/checkout
+        uses: actions/checkout@v3
 
       - name: Build website
         run: |
           yarn install
           yarn build
-
-      - name: Install firebase tools
-        run: |
-          yarn global add firebase-tools
-          firebase use daeddong-admin ${{secrets.FIREBASE_TOKEN}}
-
-      - name: Deploy to staging site
+      
+      - name: Firebase Deploy Dev
         if: github.ref == 'refs/heads/dev'
-        run: firebase deploy --only hosting:dev --non-interactive ${{secrets.FIREBASE_TOKEN}} -m "RunID ${{ github.run_id }} Commit SHA ${{ github.sha }}"
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          target: default
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_DAEDDONG_ADMIN_DEV }}"
+          projectId: daeddong-admin-dev
+          channelId: "deploy-${{ github.event.number }}-${{ github.event.pull_request.head.ref }}"
 
-      - name: Deploy to production site
-        if: github.ref == 'refs/heads/master'
-        run: firebase deploy --only hosting:prod --non-interactive ${{secrets.FIREBASE_TOKEN}} -m "RunID ${{ github.run_id }} Commit SHA ${{ github.sha }}"
+      
+      - name: Firebase Deploy Prod
+        if: github.ref == 'refs/heads/prod'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          target: production
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_DAEDDONG_ADMIN_PRODUCTION }}"
+          projectId: daeddong-admin-production
+          channelId: "deploy-${{ github.event.number }}-${{ github.event.pull_request.head.ref }}"
+
+
+
+      
+
