@@ -19,8 +19,8 @@ jobs:
           yarn build
 
       - name: test
-        run: echo "hi"
-        
+        run: echo "hi ${{github.ref}}"
+
       - name: Firebase Deploy Dev
         if: github.ref == 'refs/heads/dev'
         uses: FirebaseExtended/action-hosting-deploy@v0
