@@ -4,7 +4,7 @@
 name: Deploy to Firebase Hosting on merge
 "on":
   push:
-    branches: [main, prod]
+    branches: [main, production]
 
 jobs:
   build_and_deploy:
