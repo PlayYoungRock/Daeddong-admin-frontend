@@ -1,33 +1,13 @@
 {
-  "hosting": [
-    {
-      "target": "dev",
-      "public": "dist",
-      
-      "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ],
+  "hosting": {
+    "public": "dist",
+    "rewrites": [{
+      "source": "**",
+      "destination": "/index.html"
+    }],
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "frameworksBackend": {
       "region": "asia-east1"
-    }
-    },
-    {
-      "target": "prod",
-      "public": "dist",
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
       }
-    ],
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-    "frameworksBackend": {
-      "region": "asia-east1"
     }
-    }
-  ]
 }
