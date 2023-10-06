@@ -22,18 +22,16 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          target: default
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_DAEDDONG_ADMIN_DEV }}"
           projectId: daeddong-admin-dev
           channelId: "deploy-${{ github.event.number }}-${{ github.event.pull_request.head.ref }}"
 
       
-      - name: Firebase Deploy Prod
-        if: github.ref == 'refs/heads/prod'
+      - name: Firebase Deploy Production
+        if: github.ref == 'refs/heads/production'
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          target: production
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_DAEDDONG_ADMIN_PRODUCTION }}"
           projectId: daeddong-admin-production
