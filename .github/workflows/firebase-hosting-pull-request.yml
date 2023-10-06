@@ -9,5 +9,32 @@ jobs:
     if: "${{ github.event.pull_request.head.repo.full_name == github.repository }}"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - run: yarn install && yarn build
+      - name: actions/checkout
+        uses: actions/checkout@v3
+
+      - name: Build website
+        run: |
+          yarn install
+          yarn build
+
+      - name: Firebase Deploy Dev
+        if: github.ref == 'refs/heads/main'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_DAEDDONG_ADMIN_DEV }}"
+          projectId: daeddong-admin-dev
+      
+      - name: Firebase Deploy Production
+        if: github.ref == 'refs/heads/production'
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: "${{ secrets.GITHUB_TOKEN }}"
+          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_DAEDDONG_ADMIN_PRODUCTION }}"
+          projectId: daeddong-admin-production
+          
+
+
+
+      
+
