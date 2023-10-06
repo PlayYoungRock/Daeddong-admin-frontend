@@ -25,8 +25,7 @@ jobs:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_DAEDDONG_ADMIN_DEV }}"
           projectId: daeddong-admin-dev
-          channelId: "deploy-${{ github.event.number }}-${{ github.event.pull_request.head.ref }}"
-
+          channelId: live
       
       - name: Firebase Deploy Production
         if: github.ref == 'refs/heads/production'
@@ -35,7 +34,7 @@ jobs:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_DAEDDONG_ADMIN_PRODUCTION }}"
           projectId: daeddong-admin-production
-          channelId: "deploy-${{ github.event.number }}-${{ github.event.pull_request.head.ref }}"
+          channelId: live
 
 
 
