@@ -1,30 +1,78 @@
 import React, { useState } from 'react';
-import reactLogo from './assets/react.svg';
+import { Button } from '@components';
+
 import './App.css';
 
 function App() {
   const [count, setCount] = useState(0);
 
   return (
-    <>
+    <div>
       <div>
-        <a href="https://react.dev" target="_blank" rel="noreferrer">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <Button size="large">test</Button>
+        <Button size="large" disabled>
+          test
+        </Button>
+        <Button>test</Button>
+        <Button disabled>test</Button>
+        <Button size="small">test</Button>
+        <Button size="small" disabled>
+          test
+        </Button>
+        <Button variant="error" size="large">
+          test
+        </Button>
+        <Button variant="error" size="large" disabled>
+          test
+        </Button>
+        <Button variant="error">test</Button>
+        <Button variant="error" disabled>
+          test
+        </Button>
+        <Button variant="error" size="small">
+          test
+        </Button>
+        <Button variant="error" size="small" disabled>
+          test
+        </Button>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button type="button" onClick={() => setCount((_count) => _count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+      <div>
+        <Button buttonType="outlined" size="large">
+          test
+        </Button>
+        <Button buttonType="outlined" size="large" disabled>
+          test
+        </Button>
+        <Button buttonType="outlined">test</Button>
+        <Button buttonType="outlined" disabled>
+          test
+        </Button>
+        <Button buttonType="outlined" size="small">
+          test
+        </Button>
+        <Button buttonType="outlined" size="small" disabled>
+          test
+        </Button>
+        <Button buttonType="outlined" variant="error" size="large">
+          test
+        </Button>
+        <Button buttonType="outlined" variant="error" size="large" disabled>
+          test
+        </Button>
+        <Button buttonType="outlined" variant="error">
+          test
+        </Button>
+        <Button buttonType="outlined" variant="error" disabled>
+          test
+        </Button>
+        <Button buttonType="outlined" variant="error" size="small">
+          test
+        </Button>
+        <Button buttonType="outlined" variant="error" size="small" disabled>
+          test
+        </Button>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   );
 }
 
