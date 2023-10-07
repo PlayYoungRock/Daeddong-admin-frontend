@@ -8,16 +8,14 @@ module.exports = {
     'plugin:react/recommended',
     'plugin:prettier/recommended',
     'plugin:react-hooks/recommended',
-    'prettier'
+    'prettier',
   ],
   overrides: [
     {
       env: {
         node: true,
       },
-      files: [
-        '.eslintrc.{js,cjs}',
-      ],
+      files: ['.eslintrc.{js,cjs}'],
       parserOptions: {
         sourceType: 'script',
       },
@@ -27,6 +25,5 @@ module.exports = {
     ecmaVersion: 'latest',
     sourceType: 'module',
   },
-  rules: {
-  },
+  rules: {},
 };
