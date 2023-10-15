@@ -1,77 +1,33 @@
 import React, { useState } from 'react';
 import { Button } from '@components';
 
-import './App.css';
-
 function App() {
   const [count, setCount] = useState(0);
 
   return (
-    <div>
-      <div>
-        <Button size="large">test</Button>
-        <Button size="large" disabled>
-          test
-        </Button>
-        <Button>test</Button>
-        <Button disabled>test</Button>
-        <Button size="small">test</Button>
-        <Button size="small" disabled>
-          test
-        </Button>
-        <Button variant="error" size="large">
-          test
-        </Button>
-        <Button variant="error" size="large" disabled>
-          test
-        </Button>
-        <Button variant="error">test</Button>
-        <Button variant="error" disabled>
-          test
-        </Button>
-        <Button variant="error" size="small">
-          test
-        </Button>
-        <Button variant="error" size="small" disabled>
-          test
-        </Button>
-      </div>
-      <div>
-        <Button buttonType="outlined" size="large">
-          test
-        </Button>
-        <Button buttonType="outlined" size="large" disabled>
-          test
-        </Button>
-        <Button buttonType="outlined">test</Button>
-        <Button buttonType="outlined" disabled>
-          test
-        </Button>
-        <Button buttonType="outlined" size="small">
-          test
-        </Button>
-        <Button buttonType="outlined" size="small" disabled>
-          test
-        </Button>
-        <Button buttonType="outlined" variant="error" size="large">
-          test
-        </Button>
-        <Button buttonType="outlined" variant="error" size="large" disabled>
-          test
-        </Button>
-        <Button buttonType="outlined" variant="error">
-          test
-        </Button>
-        <Button buttonType="outlined" variant="error" disabled>
-          test
-        </Button>
-        <Button buttonType="outlined" variant="error" size="small">
-          test
-        </Button>
-        <Button buttonType="outlined" variant="error" size="small" disabled>
-          test
-        </Button>
-      </div>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '8px',
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}
+    >
+      <Button size="small" width="100px">
+        Test1
+      </Button>
+      <Button width="200px">Test2</Button>
+      <Button size="large">Test3</Button>
+      <Button size="small" width="100px" buttonType="outlined">
+        Test1
+      </Button>
+      <Button width="200px" buttonType="outlined">
+        Test2
+      </Button>
+      <Button size="large" buttonType="outlined">
+        Test3
+      </Button>
     </div>
   );
 }
