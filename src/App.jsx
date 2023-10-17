@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '@components';
+import { Select } from './components';
 
 function App() {
   const [count, setCount] = useState(0);
@@ -14,20 +15,8 @@ function App() {
         justifyContent: 'center',
       }}
     >
-      <Button size="small" width="100px">
-        Test1
-      </Button>
-      <Button width="200px">Test2</Button>
-      <Button size="large">Test3</Button>
-      <Button size="small" width="100px" buttonType="outlined">
-        Test1
-      </Button>
-      <Button width="200px" buttonType="outlined">
-        Test2
-      </Button>
-      <Button size="large" buttonType="outlined">
-        Test3
-      </Button>
+      <Select />
+      
     </div>
   );
 }
