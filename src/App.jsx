@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Button } from '@components';
 import { Select } from './components';
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [value, setValue] = useState(1);
+
+  const handleChange = useCallback((value)=> setValue(value) ,[])
 
   return (
     <div
@@ -15,8 +17,8 @@ function App() {
         justifyContent: 'center',
       }}
     >
-      <Select />
-      
+      <Select options={[{label:'test1', value: 1},{label:'test2', value: 2},{label:'test3', value: 3}]} value={value} onChange={handleChange}/>
+      <div>hi</div>
     </div>
   );
 }
