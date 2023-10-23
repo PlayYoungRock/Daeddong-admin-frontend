@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Select, Button } from '@components';
+import { Select, Button, Text } from '@components';
 
 function App() {
   const [value, setValue] = useState(1);
@@ -55,6 +55,11 @@ function App() {
         <Button variant="error" size="large" buttonType="outlined">
           test6
         </Button>
+        <Text size={14} lineHeight={18}>
+          test1
+        </Text>
+        <Text fontWeight={700}>test2</Text>
+        <Text color="red">test3</Text>
       </div>
     </div>
   );
