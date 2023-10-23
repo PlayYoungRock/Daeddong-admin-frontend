@@ -1,10 +1,12 @@
 import React, { useCallback, useState } from 'react';
-import { Select, Button, Text } from '@components';
+import { Select, Button, Text, CheckBox } from '@components';
 
 function App() {
   const [value, setValue] = useState(1);
+  const [isCheck, setIsCheck] = useState(false);
 
   const handleChange = useCallback((value) => setValue(value), []);
+  const handleChangeCheck = useCallback(() => setIsCheck((v) => !v), []);
 
   return (
     <div
@@ -60,6 +62,7 @@ function App() {
         </Text>
         <Text fontWeight={700}>test2</Text>
         <Text color="red">test3</Text>
+        <CheckBox checked={isCheck} onChange={handleChangeCheck} />
       </div>
     </div>
   );
