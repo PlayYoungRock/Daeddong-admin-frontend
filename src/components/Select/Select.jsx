@@ -1,36 +1,65 @@
-import React, { memo, useCallback, useId, useState } from 'react';
+import React, { useEffect, useId, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import Arrow from '@assets/arrow-drop-down-filled.svg?react';
 
-export const Select = memo(
-  ({ width = '100%', height = 32, value = null, options = [], onChange }) => {
-    const uniqueId = useId();
-    const [isOpen, setIsOpen] = useState(false);
+export const Select = ({
+  width = '100%',
+  height = 32,
+  value = null,
+  options = [],
+  onChange,
+}) => {
+  const uniqueId = useId();
+  const selectRef = useRef(null);
+  const dropDownRef = useRef(null);
+  const [isOpen, setIsOpen] = useState(false);
 
-    const handleToggle = useCallback(() => setIsOpen((state) => !state), []);
+  useEffect(() => {
+    if (!window || !dropDownRef.current || !selectRef.current) return;
 
-    return (
-      <SelectContainer $width={width} $height={height} onClick={handleToggle}>
-        {options.find(({ value: optionValue }) => optionValue === value)
-          ?.label ?? null}
-        <Wrapper $isOpen={isOpen}>
-          <Arrow />
-        </Wrapper>
-        <Dropdown $isOpen={isOpen}>
-          {options.map((option, index) => (
-            <Option
-              key={`${uniqueId}${index}}`}
-              onClick={() => onChange(option.value)}
-            >
-              {option.label}
-            </Option>
-          ))}
-        </Dropdown>
-      </SelectContainer>
-    );
-  },
-);
+    const handleClose = (e) => {
+      if (!e.target) return;
+      const isClickedSelect =
+        selectRef.current.contains(e.target) ||
+        dropDownRef.current.contains(e.target);
+
+      if (isClickedSelect) return;
+      setIsOpen(false);
+    };
+
+    document.body.addEventListener('click', handleClose);
+
+    return () => {
+      document.body.removeEventListener('click', handleClose);
+    };
+  }, []);
+
+  return (
+    <SelectContainer
+      ref={selectRef}
+      $width={width}
+      $height={height}
+      onClick={() => setIsOpen((state) => !state)}
+    >
+      {options.find(({ value: optionValue }) => optionValue === value)?.label ??
+        null}
+      <Wrapper>
+        <Arrow />
+      </Wrapper>
+      <Dropdown $isOpen={isOpen} ref={dropDownRef}>
+        {options.map((option, index) => (
+          <Option
+            key={`select-${uniqueId}-${index}-${option.value}}`}
+            onClick={() => onChange(option.value)}
+          >
+            {option.label}
+          </Option>
+        ))}
+      </Dropdown>
+    </SelectContainer>
+  );
+};
 
 const SelectContainer = styled.div`
   position: relative;
@@ -55,8 +84,9 @@ const Wrapper = styled.div`
     props.$isOpen ? `translate(0, -50%) rotate(180deg)` : `translate(0, -50%)`};
 `;
 
-const Dropdown = styled.div`
+const Dropdown = styled.ul`
   position: absolute;
+  z-index: 100;
   top: calc(100% + 8px);
   left: 0;
   width: 100%;
@@ -69,7 +99,7 @@ const Dropdown = styled.div`
   overflow: auto;
 `;
 
-const Option = styled.div`
+const Option = styled.li`
   padding: 8px;
   border-top: 1px solid #ccc;
   cursor: pointer;
