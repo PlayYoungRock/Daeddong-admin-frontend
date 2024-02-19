@@ -30,7 +30,7 @@ export const Button = memo(
         $width={width}
         $size={size}
         $variant={variant}
-        $onClick={handleOnClick}
+        onClick={handleOnClick}
         {...props}
       >
         {children}
@@ -40,7 +40,7 @@ export const Button = memo(
         $width={width}
         $size={size}
         $variant={variant}
-        $onClick={handleOnClick}
+        onClick={handleOnClick}
         {...props}
       >
         {children}
