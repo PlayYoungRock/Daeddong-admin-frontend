@@ -5,15 +5,19 @@ import CheckIcon from '@assets/check-box.svg?react';
 
 export const CheckBox = memo(({ checked, onChange, label, ...props }) => {
   return (
-    <div>
+    <Label>
       <AbstractCheckBox checked={checked} onChange={onChange} {...props} />
-      <CheckBoxWrapper onClick={onChange}>
-        {checked && <CheckIcon />}
-      </CheckBoxWrapper>
+      <CheckBoxWrapper>{checked && <CheckIcon />}</CheckBoxWrapper>
       {label}
-    </div>
+    </Label>
   );
 });
+
+const Label = styled.label`
+  display: flex;
+  gap: 8px;
+  align-items: center;
+`;
 
 const AbstractCheckBox = styled.input.attrs({ type: 'checkbox' })`
   display: none;
