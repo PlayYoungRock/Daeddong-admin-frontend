@@ -29,7 +29,6 @@ const HomePage = () => {
           </LNBItem>
         ))}
       </LNB>
-      HomePage
       <Outlet />
     </Container>
   );
