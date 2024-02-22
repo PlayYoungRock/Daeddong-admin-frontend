@@ -1,6 +1,8 @@
 import React, { memo, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { CheckBox, Input, Radio, Select, Text } from '../components';
+import { Button, CheckBox, Input, Radio, Select, Text } from '../components';
+import { HOME_PAGE, LOCATION_LIST_PAGE } from './router';
+import { useNavigate } from 'react-router-dom';
 
 const OPTION_LIST = {
   tolietType: [
@@ -38,6 +40,7 @@ const OPTION_LIST = {
 };
 
 const useLocationDetailPage = () => {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     name: '',
     address: '',
@@ -60,7 +63,7 @@ const useLocationDetailPage = () => {
       { type: 'input', label: '장소명', name: 'name', value: form.name },
       { type: 'input', label: '주소', name: 'address', value: form.address },
       {
-        type: '',
+        type: 'time',
         label: '개방시간',
         name: 'time',
         value: [form.openTime, form.closeTime],
@@ -73,7 +76,7 @@ const useLocationDetailPage = () => {
         options: OPTION_LIST.tolietType,
       },
       {
-        type: '',
+        type: 'count',
         label: '화장실 개수',
         name: 'count',
         value: [form.countMan, form.countWomen],
@@ -130,11 +133,18 @@ const useLocationDetailPage = () => {
     setForm((f) => ({ ...f, [name]: value }));
   };
 
-  return { fieldList, handleOnChange };
+  const handleOnSubmit = () => {
+    console.log(form);
+  };
+
+  const handleGoList = () => navigate(`${HOME_PAGE}${LOCATION_LIST_PAGE}`);
+
+  return { fieldList, handleOnChange, handleOnSubmit, handleGoList };
 };
 
 const LocationDetailPage = () => {
-  const { fieldList, handleOnChange } = useLocationDetailPage();
+  const { fieldList, handleOnChange, handleOnSubmit, handleGoList } =
+    useLocationDetailPage();
 
   return (
     <Container>
@@ -155,6 +165,14 @@ const LocationDetailPage = () => {
           </FormWrapper>
         ))}
       </FormContainer>
+      <CustomWrapper mt="20px">
+        <Button size="large" onClick={handleOnSubmit}>
+          등록
+        </Button>
+        <Button size="large" buttonType="outlined" onClick={handleGoList}>
+          취소
+        </Button>
+      </CustomWrapper>
     </Container>
   );
 };
@@ -164,6 +182,7 @@ export default LocationDetailPage;
 const Container = styled.div`
   padding: 20px;
   flex: 1;
+  overflow-y: auto;
 `;
 
 const FormContainer = styled.div`
@@ -184,7 +203,7 @@ const FormWrapper = styled.div`
 const LabelWrapper = styled.div`
   display: flex;
   align-items: center;
-  width: 200px;
+  min-width: 200px;
 `;
 
 const FieldWrapper = styled.div`
@@ -206,12 +225,59 @@ const FieldItem = memo(({ type, ...props }) => {
       return <Radio {...props} />;
     }
     case 'time': {
-      return <div>시간</div>;
+      const [open, close] = props.value;
+
+      return (
+        <CustomWrapper>
+          <Input
+            width="300px"
+            type="time"
+            {...props}
+            name="openTime"
+            value={open}
+          />
+          <Input
+            width="300px"
+            type="time"
+            {...props}
+            name="closeTime"
+            value={close}
+          />
+        </CustomWrapper>
+      );
     }
     case 'count': {
-      return <div>개수</div>;
+      const [man, women] = props.value;
+      return (
+        <CustomWrapper>
+          <Text>남자</Text>
+          <Input
+            width="150px"
+            type="number"
+            {...props}
+            name="countMan"
+            value={man}
+          />
+          <Text>여자</Text>
+          <Input
+            width="150px"
+            type="number"
+            {...props}
+            name="countWomen"
+            value={women}
+          />
+        </CustomWrapper>
+      );
     }
     default:
       null;
   }
 });
+
+const CustomWrapper = styled.div`
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+  margin-top: ${({ mt }) => mt ?? '0px'};
+`;
