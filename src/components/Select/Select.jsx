@@ -1,4 +1,4 @@
-import React, { useEffect, useId, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import Arrow from '@assets/arrow-drop-down-filled.svg?react';
@@ -8,12 +8,20 @@ export const Select = ({
   height = 32,
   value = null,
   options = [],
+  name,
   onChange,
 }) => {
   const uniqueId = useId();
   const selectRef = useRef(null);
   const dropDownRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleOnChange = useCallback((e) => {
+    if (onChange) {
+      setIsOpen(false);
+      onChange(e);
+    }
+  }, []);
 
   useEffect(() => {
     if (!window || !dropDownRef.current || !selectRef.current) return;
@@ -47,15 +55,27 @@ export const Select = ({
       <Wrapper>
         <Arrow />
       </Wrapper>
+
       <Dropdown $isOpen={isOpen} ref={dropDownRef}>
-        {options.map((option, index) => (
-          <Option
-            key={`select-${uniqueId}-${index}-${option.value}}`}
-            onClick={() => onChange(option.value)}
-          >
-            {option.label}
+        {options.length ? (
+          options.map((option, index) => (
+            <Option key={`select-${uniqueId}-${index}-${option.value}}`}>
+              <Label>
+                <UnVisibleInput
+                  type="radio"
+                  value={option.value}
+                  name={name}
+                  onChange={handleOnChange}
+                ></UnVisibleInput>
+                {option.label}
+              </Label>
+            </Option>
+          ))
+        ) : (
+          <Option>
+            <Label>옵션없음</Label>
           </Option>
-        ))}
+        )}
       </Dropdown>
     </SelectContainer>
   );
@@ -100,11 +120,23 @@ const Dropdown = styled.ul`
 `;
 
 const Option = styled.li`
-  padding: 8px;
+  display: flex;
+  align-items: center;
   border-top: 1px solid #ccc;
+`;
+
+const Label = styled.label`
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  padding: 8px;
   cursor: pointer;
 
   &:hover {
     background-color: #f0f0f0;
   }
+`;
+
+const UnVisibleInput = styled.input`
+  display: none;
 `;

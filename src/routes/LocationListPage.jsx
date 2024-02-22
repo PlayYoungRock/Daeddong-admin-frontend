@@ -52,11 +52,14 @@ const useLocationListPage = () => {
     size: SIZE_LIST[0].value,
   });
 
-  const handleOnChange = (key) => (value) =>
+  const handleOnChange = (e) => {
+    const { name, value } = e.target;
+    console.log(name, value);
     setFilter((filter) => ({
       ...filter,
-      [key]: key === 'value' ? value.target.value : value,
+      [name]: value,
     }));
+  };
 
   const [checkList, setCheckList] = useState(MOCK_ROW_LIST.map(() => false));
 
@@ -81,21 +84,19 @@ const LocationListPage = () => {
         <FilterWrapper>
           <Select
             width="200px"
+            name="si"
             value={filter.si}
             options={SI_LIST}
-            onChange={handleOnChange('si')}
+            onChange={handleOnChange}
           />
           <Select
             width="200px"
+            name="gungu"
             value={filter.gungu}
             options={GUNGU_LIST}
-            onChange={handleOnChange('gungu')}
+            onChange={handleOnChange}
           />
-          <Input
-            $width="100%"
-            value={filter.value}
-            onChange={handleOnChange('value')}
-          />
+          <Input $width="100%" value={filter.value} onChange={handleOnChange} />
           <Button width="100px" buttonType="outline">
             초기화
           </Button>
@@ -107,9 +108,10 @@ const LocationListPage = () => {
           </Button>
           <Select
             width="200px"
+            name="size"
             value={filter.size}
             options={SIZE_LIST}
-            onChange={handleOnChange('size')}
+            onChange={handleOnChange}
           />
         </FilterWrapper>
       </div>
