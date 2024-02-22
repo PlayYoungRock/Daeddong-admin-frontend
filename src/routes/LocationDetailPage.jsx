@@ -1,8 +1,8 @@
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { Button, CheckBox, Input, Radio, Select, Text } from '../components';
 import { HOME_PAGE, LOCATION_LIST_PAGE } from './router';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 const OPTION_LIST = {
   tolietType: [
@@ -41,6 +41,10 @@ const OPTION_LIST = {
 
 const useLocationDetailPage = () => {
   const navigate = useNavigate();
+  const { locationId } = useParams();
+
+  const pageType = useMemo(() => (locationId ? '수정' : '등록'), [locationId]);
+
   const [form, setForm] = useState({
     name: '',
     address: '',
@@ -133,23 +137,33 @@ const useLocationDetailPage = () => {
     setForm((f) => ({ ...f, [name]: value }));
   };
 
-  const handleOnSubmit = () => {
+  const handleOnSubmit = useCallback(() => {
     console.log(form);
-  };
+    if (locationId) {
+      // TODO 수정api
+    }
+    // TODO 생성 api
+  }, [form, locationId]);
 
   const handleGoList = () => navigate(`${HOME_PAGE}${LOCATION_LIST_PAGE}`);
 
-  return { fieldList, handleOnChange, handleOnSubmit, handleGoList };
+  return {
+    pageType,
+    fieldList,
+    handleOnChange,
+    handleOnSubmit,
+    handleGoList,
+  };
 };
 
 const LocationDetailPage = () => {
-  const { fieldList, handleOnChange, handleOnSubmit, handleGoList } =
+  const { pageType, fieldList, handleOnChange, handleOnSubmit, handleGoList } =
     useLocationDetailPage();
 
   return (
     <Container>
       <Text size="20px" lineHeight="24px" fontWeight="600">
-        장소등록
+        장소{pageType}
       </Text>
       <FormContainer>
         {fieldList.map(({ label, ...field }, i) => (
@@ -167,7 +181,7 @@ const LocationDetailPage = () => {
       </FormContainer>
       <CustomWrapper mt="20px">
         <Button size="large" onClick={handleOnSubmit}>
-          등록
+          {pageType}
         </Button>
         <Button size="large" buttonType="outlined" onClick={handleGoList}>
           취소
