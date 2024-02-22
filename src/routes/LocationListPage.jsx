@@ -54,7 +54,7 @@ const useLocationListPage = () => {
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
-    console.log(name, value);
+
     setFilter((filter) => ({
       ...filter,
       [name]: value,
@@ -96,7 +96,12 @@ const LocationListPage = () => {
             options={GUNGU_LIST}
             onChange={handleOnChange}
           />
-          <Input $width="100%" value={filter.value} onChange={handleOnChange} />
+          <Input
+            $width="100%"
+            name="value"
+            value={filter.value}
+            onChange={handleOnChange}
+          />
           <Button width="100px" buttonType="outline">
             초기화
           </Button>
