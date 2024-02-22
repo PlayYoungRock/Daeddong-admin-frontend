@@ -18,7 +18,11 @@ export const router = [
         element: <LocationListPage />,
       },
       {
-        path: `${LOCATION_LIST_PAGE}/:id`,
+        path: `${LOCATION_LIST_PAGE}/:locationId`,
+        element: <LocationDetailPage />,
+      },
+      {
+        path: `${LOCATION_LIST_PAGE}/new`,
         element: <LocationDetailPage />,
       },
       {

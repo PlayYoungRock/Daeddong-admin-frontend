@@ -37,6 +37,7 @@ const HomePage = () => {
 export default HomePage;
 
 const Container = styled.div`
+  min-width: 1000px;
   width: 100vw;
   height: 100vh;
   display: flex;
