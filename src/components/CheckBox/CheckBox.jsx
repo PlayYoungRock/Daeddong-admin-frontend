@@ -3,10 +3,10 @@ import styled from 'styled-components';
 
 import CheckIcon from '@assets/check-box.svg?react';
 
-export const CheckBox = memo(({ checked, onChange, label, ...props }) => {
+export const CheckBox = memo(({ checked, label, ...props }) => {
   return (
     <Label>
-      <AbstractCheckBox checked={checked} onChange={onChange} {...props} />
+      <AbstractCheckBox type="checkbox" checked={checked} {...props} />
       <CheckBoxWrapper>{checked && <CheckIcon />}</CheckBoxWrapper>
       {label}
     </Label>
