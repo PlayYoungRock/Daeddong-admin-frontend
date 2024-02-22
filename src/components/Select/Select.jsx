@@ -88,7 +88,9 @@ const SelectContainer = styled.div`
   justify-content: center;
   border: 1px solid #ccc;
   width: ${(props) =>
-    Number.isInteger(props.$width) ? `${props.$width}px` : props.$width};
+    Number.isInteger(props.$width)
+      ? `${props.$width - 2}px`
+      : `calc(${props.$width} - 2px)`};
   height: ${(props) =>
     Number.isInteger(props.$height) ? `${props.$height}px` : props.$height};
   border-radius: 4px;
