@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
-import { Button, CheckBox, Input, Select } from '../components';
+import { Button, CheckBox, Input, Select, Text } from '../components';
+import { useNavigate } from 'react-router-dom';
 
 const SI_LIST = [
   { label: '서울', value: 'seoul' },
@@ -45,6 +46,7 @@ const MOCK_ROW_LIST = [
 ];
 
 const useLocationListPage = () => {
+  const navigate = useNavigate();
   const [filter, setFilter] = useState({
     si: SI_LIST[0].value,
     gungu: GUNGU_LIST[0].value,
@@ -71,41 +73,47 @@ const useLocationListPage = () => {
     );
   };
 
-  return { filter, checkList, handleOnChange, handleOnToggle };
+  const handleGoDetail = useCallback(
+    (locationId) => navigate(`${locationId}`),
+    [navigate],
+  );
+
+  return { filter, checkList, handleOnChange, handleOnToggle, handleGoDetail };
 };
 
 const LocationListPage = () => {
-  const { filter, checkList, handleOnChange, handleOnToggle } =
+  const { filter, checkList, handleOnChange, handleOnToggle, handleGoDetail } =
     useLocationListPage();
 
   return (
     <Container>
       <div>
         <FilterWrapper>
-          <Select
-            width="200px"
-            name="si"
-            value={filter.si}
-            options={SI_LIST}
-            onChange={handleOnChange}
-          />
-          <Select
-            width="200px"
-            name="gungu"
-            value={filter.gungu}
-            options={GUNGU_LIST}
-            onChange={handleOnChange}
-          />
+          <SideWrapper>
+            <Select
+              width="100%"
+              name="si"
+              value={filter.si}
+              options={SI_LIST}
+              onChange={handleOnChange}
+            />
+            <Select
+              name="gungu"
+              value={filter.gungu}
+              options={GUNGU_LIST}
+              onChange={handleOnChange}
+            />
+          </SideWrapper>
           <Input
-            $width="100%"
             name="value"
             value={filter.value}
             onChange={handleOnChange}
+            style={{ flex: 2 }}
           />
-          <Button width="100px" buttonType="outline">
-            초기화
-          </Button>
-          <Button width="100px">검색</Button>
+          <SideWrapper>
+            <Button buttonType="outline">초기화</Button>
+            <Button>검색</Button>
+          </SideWrapper>
         </FilterWrapper>
         <FilterWrapper isreverse="true" mt="20px">
           <Button width="100px" buttonType="outline">
@@ -118,6 +126,9 @@ const LocationListPage = () => {
             options={SIZE_LIST}
             onChange={handleOnChange}
           />
+          <Button width="100px" onClick={() => handleGoDetail('new')}>
+            등록하기
+          </Button>
         </FilterWrapper>
       </div>
       <Divider />
@@ -144,7 +155,9 @@ const LocationListPage = () => {
                 <CheckBox checked={checkList[i]} onChange={handleOnToggle(i)} />
               </Td>
               <Td>{r.seq}</Td>
-              <Td>{r.name}</Td>
+              <Td onClick={() => handleGoDetail(r.seq)}>
+                <CustomText>{r.name}</CustomText>
+              </Td>
               <Td>{r.address}</Td>
               <Td>{r.tolietType}</Td>
               <Td>{r.manageAgency}</Td>
@@ -161,6 +174,14 @@ export default LocationListPage;
 const Container = styled.div`
   padding: 20px;
   flex: 1;
+  overflow-y: auto;
+`;
+
+const SideWrapper = styled.div`
+  flex: 1;
+  flex-basis: 200px;
+  display: flex;
+  gap: 8px;
 `;
 
 const FilterWrapper = styled.div`
@@ -200,4 +221,9 @@ const Td = styled.td`
   text-align: center;
   vertical-align: middle;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+`;
+
+const CustomText = styled(Text)`
+  color: cornflowerblue;
+  cursor: pointer;
 `;
