@@ -13,10 +13,6 @@ const OPTION_LIST = {
     { label: '가능', value: 'Y' },
     { label: '불가능', value: 'N' },
   ],
-  babyYn: [
-    { label: '가능', value: 'Y' },
-    { label: '불가능', value: 'N' },
-  ],
   unusualYn: [
     { label: '가능', value: 'Y' },
     { label: '불가능', value: 'N' },
