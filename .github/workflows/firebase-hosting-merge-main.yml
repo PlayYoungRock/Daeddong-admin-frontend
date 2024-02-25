@@ -2,7 +2,7 @@
 # https://github.com/firebase/firebase-tools
 
 name: Deploy to Firebase Hosting on merge
-"on":
+'on':
   push:
     branches: [main]
 
@@ -13,7 +13,7 @@ jobs:
       - name: actions/checkout
         uses: actions/checkout@v3
 
-     - name: Generate Environment Variables File for Production
+      - name: Generate Environment Variables File for Production
         env:
           VITE_BASE_API_URL: ${{ secrets.DEV_BASE_API_URL }}
 
@@ -26,12 +26,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: FirebaseExtended/action-hosting-deploy@v0
         with:
-          repoToken: "${{ secrets.GITHUB_TOKEN }}"
-          firebaseServiceAccount: "${{ secrets.FIREBASE_SERVICE_ACCOUNT_DAEDDONG_ADMIN_DEV }}"
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_DAEDDONG_ADMIN_DEV }}'
           projectId: daeddong-admin-dev
           channelId: live
-    
-
-
-      
-
