@@ -1,7 +1,8 @@
-import React, { useCallback, useState } from 'react';
+import React, { memo, useState } from 'react';
 import styled from 'styled-components';
-import { Button, CheckBox, Input, Select, Text } from '../components';
-import { useNavigate } from 'react-router-dom';
+import { Button, CheckBox, Input, Select } from '../components';
+import { useQuery } from '@tanstack/react-query';
+import { getToiletList } from '../utils/toiletAPI';
 
 const SI_LIST = [
   { label: '서울', value: 'seoul' },
@@ -73,17 +74,31 @@ const useLocationListPage = () => {
     );
   };
 
+  const { data: toiletList } = useQuery(['toiletList'], getToiletList);
   const handleGoDetail = useCallback(
     (locationId) => navigate(`${locationId}`),
     [navigate],
   );
 
-  return { filter, checkList, handleOnChange, handleOnToggle, handleGoDetail };
+  return {
+    filter,
+    checkList,
+    toiletList,
+    handleOnChange,
+    handleOnToggle,
+    handleGoDetail,
+  };
 };
 
-const LocationListPage = () => {
-  const { filter, checkList, handleOnChange, handleOnToggle, handleGoDetail } =
-    useLocationListPage();
+const LocationListPage = memo(() => {
+  const {
+    filter,
+    checkList,
+    toiletList,
+    handleOnChange,
+    handleOnToggle,
+    handleGoDetail,
+  } = useLocationListPage();
 
   return (
     <Container>
@@ -132,42 +147,45 @@ const LocationListPage = () => {
         </FilterWrapper>
       </div>
       <Divider />
-      <Table>
-        <THead>
-          <tr>
-            <Th>
-              <CheckBox
-                checked={checkList.every((check) => check)}
-                onChange={handleOnToggle('all')}
-              />
-            </Th>
-            <Th>번호</Th>
-            <Th>장소명</Th>
-            <Th>주소</Th>
-            <Th>화장실종류</Th>
-            <Th>승인여부</Th>
-          </tr>
-        </THead>
-        <tbody>
-          {MOCK_ROW_LIST.map((r, i) => (
-            <tr key={`location-table-row-${i}`}>
-              <Td>
-                <CheckBox checked={checkList[i]} onChange={handleOnToggle(i)} />
-              </Td>
-              <Td>{r.seq}</Td>
-              <Td onClick={() => handleGoDetail(r.seq)}>
-                <CustomText>{r.name}</CustomText>
-              </Td>
-              <Td>{r.address}</Td>
-              <Td>{r.tolietType}</Td>
-              <Td>{r.manageAgency}</Td>
+      {toiletList && (
+        <Table>
+          <THead>
+            <tr>
+              <Th>
+                <CheckBox
+                  checked={checkList.every((check) => check)}
+                  onChange={handleOnToggle('all')}
+                />
+              </Th>
+              <Th>번호</Th>
+              <Th>장소명</Th>
+              <Th>주소</Th>
+              <Th>화장실종류</Th>
+              <Th>승인여부</Th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
+          </THead>
+          <tbody>
+            {toiletList.map(({ seq, name, address, toiletType, openYn }, i) => (
+              <tr key={`location-table-row-${i}`}>
+                <Td>
+                  <CheckBox
+                    checked={checkList[i]}
+                    onChange={handleOnToggle(i)}
+                  />
+                </Td>
+                <Td>{seq}</Td>
+                <Td>{name}</Td>
+                <Td>{address}</Td>
+                <Td>{toiletType}</Td>
+                <Td>{openYn}</Td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      )}
     </Container>
   );
-};
+});
 
 export default LocationListPage;
 
