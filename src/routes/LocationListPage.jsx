@@ -1,8 +1,9 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import styled from 'styled-components';
 import { Button, CheckBox, Input, Select } from '../components';
 import { useQuery } from '@tanstack/react-query';
 import { getToiletList } from '../utils/toiletAPI';
+import { useNavigate } from 'react-router-dom';
 
 const SI_LIST = [
   { label: '서울', value: 'seoul' },
@@ -75,6 +76,7 @@ const useLocationListPage = () => {
   };
 
   const { data: toiletList } = useQuery(['toiletList'], getToiletList);
+
   const handleGoDetail = useCallback(
     (locationId) => navigate(`${locationId}`),
     [navigate],
