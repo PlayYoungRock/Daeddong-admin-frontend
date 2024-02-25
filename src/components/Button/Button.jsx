@@ -84,7 +84,7 @@ const containedColor = {
 const ContainedButton = styled(BaseButton)`
   color: #ffffff;
   background-color: ${(props) => containedColor[props.$variant].enabled};
-  border: none;
+  border: 1px solid ${(props) => containedColor[props.$variant].enabled};
 
   &:hover {
     background-color: ${(props) => containedColor[props.$variant].hover};

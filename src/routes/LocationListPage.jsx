@@ -47,6 +47,7 @@ const MOCK_ROW_LIST = [
 ];
 
 const useLocationListPage = () => {
+  const navigate = useNavigate();
   const [filter, setFilter] = useState({
     si: SI_LIST[0].value,
     gungu: GUNGU_LIST[0].value,
@@ -54,11 +55,14 @@ const useLocationListPage = () => {
     size: SIZE_LIST[0].value,
   });
 
-  const handleOnChange = (key) => (value) =>
+  const handleOnChange = (e) => {
+    const { name, value } = e.target;
+
     setFilter((filter) => ({
       ...filter,
-      [key]: key === 'value' ? value.target.value : value,
+      [name]: value,
     }));
+  };
 
   const [checkList, setCheckList] = useState(MOCK_ROW_LIST.map(() => false));
 
@@ -71,39 +75,60 @@ const useLocationListPage = () => {
   };
 
   const { data: toiletList } = useQuery(['toiletList'], getToiletList);
+  const handleGoDetail = useCallback(
+    (locationId) => navigate(`${locationId}`),
+    [navigate],
+  );
 
-  return { filter, checkList, toiletList, handleOnChange, handleOnToggle };
+  return {
+    filter,
+    checkList,
+    toiletList,
+    handleOnChange,
+    handleOnToggle,
+    handleGoDetail,
+  };
 };
 
 const LocationListPage = memo(() => {
-  const { filter, checkList, toiletList, handleOnChange, handleOnToggle } =
-    useLocationListPage();
+  const {
+    filter,
+    checkList,
+    toiletList,
+    handleOnChange,
+    handleOnToggle,
+    handleGoDetail,
+  } = useLocationListPage();
 
   return (
     <Container>
       <div>
         <FilterWrapper>
-          <Select
-            width="200px"
-            value={filter.si}
-            options={SI_LIST}
-            onChange={handleOnChange('si')}
-          />
-          <Select
-            width="200px"
-            value={filter.gungu}
-            options={GUNGU_LIST}
-            onChange={handleOnChange('gungu')}
-          />
+          <SideWrapper>
+            <Select
+              width="100%"
+              name="si"
+              value={filter.si}
+              options={SI_LIST}
+              onChange={handleOnChange}
+            />
+            <Select
+              name="gungu"
+              value={filter.gungu}
+              options={GUNGU_LIST}
+              onChange={handleOnChange}
+            />
+          </SideWrapper>
           <Input
-            $width="100%"
+            name="value"
             value={filter.value}
-            onChange={handleOnChange('value')}
+            onChange={handleOnChange}
+            style={{ flex: 2 }}
           />
-          <Button width="100px" buttonType="outline">
-            초기화
-          </Button>
-          <Button width="100px">검색</Button>
+          <SideWrapper>
+            <Button buttonType="outline">초기화</Button>
+            <Button>검색</Button>
+          </SideWrapper>
         </FilterWrapper>
         <FilterWrapper isreverse="true" mt="20px">
           <Button width="100px" buttonType="outline">
@@ -111,10 +136,14 @@ const LocationListPage = memo(() => {
           </Button>
           <Select
             width="200px"
+            name="size"
             value={filter.size}
             options={SIZE_LIST}
-            onChange={handleOnChange('size')}
+            onChange={handleOnChange}
           />
+          <Button width="100px" onClick={() => handleGoDetail('new')}>
+            등록하기
+          </Button>
         </FilterWrapper>
       </div>
       <Divider />
@@ -163,6 +192,14 @@ export default LocationListPage;
 const Container = styled.div`
   padding: 20px;
   flex: 1;
+  overflow-y: auto;
+`;
+
+const SideWrapper = styled.div`
+  flex: 1;
+  flex-basis: 200px;
+  display: flex;
+  gap: 8px;
 `;
 
 const FilterWrapper = styled.div`
@@ -202,4 +239,9 @@ const Td = styled.td`
   text-align: center;
   vertical-align: middle;
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+`;
+
+const CustomText = styled(Text)`
+  color: cornflowerblue;
+  cursor: pointer;
 `;
