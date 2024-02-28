@@ -1,6 +1,6 @@
-import React, { memo, useCallback, useState } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Button, CheckBox, Input, Select } from '../components';
+import { Button, CheckBox, Input, Select, Text } from '../components';
 import { useQuery } from '@tanstack/react-query';
 import { getToiletList } from '../utils/toiletAPI';
 import { useNavigate } from 'react-router-dom';
@@ -53,8 +53,9 @@ const useLocationListPage = () => {
     si: SI_LIST[0].value,
     gungu: GUNGU_LIST[0].value,
     value: '',
-    size: SIZE_LIST[0].value,
   });
+
+  const [pageInfo, setPageInfo] = useState({ page: 1, size: 10, total: 1000 });
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
@@ -82,13 +83,25 @@ const useLocationListPage = () => {
     [navigate],
   );
 
+  const handleOnChangePageInfo = (e) => {
+    const { name, value } = e.target;
+
+    setPageInfo((p) => ({
+      ...p,
+      page: name === 'size' ? 1 : Number(value),
+      [name]: Number(value),
+    }));
+  };
+
   return {
     filter,
     checkList,
     toiletList,
+    pageInfo,
     handleOnChange,
     handleOnToggle,
     handleGoDetail,
+    handleOnChangePageInfo,
   };
 };
 
@@ -97,9 +110,11 @@ const LocationListPage = memo(() => {
     filter,
     checkList,
     toiletList,
+    pageInfo,
     handleOnChange,
     handleOnToggle,
     handleGoDetail,
+    handleOnChangePageInfo,
   } = useLocationListPage();
 
   return (
@@ -141,7 +156,7 @@ const LocationListPage = memo(() => {
             name="size"
             value={filter.size}
             options={SIZE_LIST}
-            onChange={handleOnChange}
+            onChange={handleOnChangePageInfo}
           />
           <Button width="100px" onClick={() => handleGoDetail('new')}>
             등록하기
@@ -185,6 +200,12 @@ const LocationListPage = memo(() => {
           </tbody>
         </Table>
       )}
+      <Pagination
+        page={pageInfo.page}
+        size={pageInfo.size}
+        total={pageInfo.total}
+        onChange={handleOnChangePageInfo}
+      />
     </Container>
   );
 });
@@ -243,7 +264,66 @@ const Td = styled.td`
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 `;
 
+const Pagination = memo(({ page, size, total, onChange }) => {
+  const totalPage = useMemo(() => Math.ceil(total / size), [total, size]);
+  const startPage = useMemo(() => Math.ceil(page / 10 - 1) * 10, [page]);
+  const endPage = useMemo(
+    () => (totalPage - startPage > 10 ? startPage + 10 : totalPage),
+    [totalPage, startPage],
+  );
+
+  const pageList = useMemo(
+    () =>
+      Array.from({ length: endPage - startPage }, (_, i) => startPage + i + 1),
+    [startPage, endPage],
+  );
+
+  const handleOnChange = useCallback(
+    (page) => {
+      if (onChange) {
+        onChange({ target: { name: 'page', value: page } });
+      }
+    },
+    [onChange],
+  );
+
+  return (
+    <PaginationContainer>
+      {startPage !== 0 && (
+        <CustomText onClick={() => handleOnChange(startPage - 9)}>
+          이전
+        </CustomText>
+      )}
+      {pageList.map((p, i) => (
+        <CustomText
+          key={i + 1}
+          $isSelected={p === page}
+          onClick={() => handleOnChange(p)}
+        >
+          {p}
+        </CustomText>
+      ))}
+      {endPage !== totalPage && (
+        <CustomText onClick={() => handleOnChange(endPage + 1)}>
+          다음
+        </CustomText>
+      )}
+    </PaginationContainer>
+  );
+});
+
+const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+`;
+
 const CustomText = styled(Text)`
-  color: cornflowerblue;
+  color: ${({ $isSelected }) => ($isSelected ? 'cornflowerblue' : '#111')};
   cursor: pointer;
+
+  &:hover {
+    color: cornflowerblue;
+  }
 `;
