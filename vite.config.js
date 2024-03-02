@@ -17,6 +17,7 @@ export default defineConfig({
         replacement: resolve(__dirname, '/src/components'),
       },
       { find: '@styles', replacement: resolve(__dirname, '/src/styles') },
+      { find: '@utils', replacement: resolve(__dirname, '/src/utils') },
     ],
   },
 });
