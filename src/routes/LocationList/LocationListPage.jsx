@@ -11,7 +11,9 @@ export const LocationListPage = memo(() => {
     filter,
     checkList,
     toiletList,
-    pageInfo,
+    page,
+    size,
+    total,
     handleOnChange,
     handleOnToggle,
     handleGoDetail,
@@ -55,7 +57,7 @@ export const LocationListPage = memo(() => {
           <Select
             width="200px"
             name="size"
-            value={filter.size}
+            value={size}
             options={SIZE_LIST}
             onChange={handleOnChangePageInfo}
           />
@@ -83,7 +85,7 @@ export const LocationListPage = memo(() => {
             </tr>
           </THead>
           <tbody>
-            {toiletList.map(({ seq, name, address, toiletType, openYn }, i) => (
+            {toiletList.map(({ name, address, toiletType, openYn }, i) => (
               <tr key={`location-table-row-${i}`}>
                 <Td>
                   <CheckBox
@@ -91,7 +93,7 @@ export const LocationListPage = memo(() => {
                     onChange={handleOnToggle(i)}
                   />
                 </Td>
-                <Td>{seq}</Td>
+                <Td>{(page - 1) * size + i + 1}</Td>
                 <Td>{name}</Td>
                 <Td>{address}</Td>
                 <Td>{toiletType}</Td>
@@ -102,9 +104,9 @@ export const LocationListPage = memo(() => {
         </Table>
       )}
       <Pagination
-        page={pageInfo.page}
-        size={pageInfo.size}
-        total={pageInfo.total}
+        page={page}
+        size={size}
+        total={total}
         onChange={handleOnChangePageInfo}
       />
     </Container>
