@@ -1,7 +1,7 @@
 import HomePage from './HomePage';
 import ErrorPage from './ErrorPage';
 import LocationDetailPage from './LocationDetailPage';
-import LocationListPage from './LocationListPage';
+import { LocationListPage } from './LocationList';
 
 export const HOME_PAGE = '/';
 export const LOCATION_LIST_PAGE = 'location-list';

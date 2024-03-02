@@ -1,111 +1,12 @@
-import React, { memo, useCallback, useMemo, useState } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 import styled from 'styled-components';
-import { Button, CheckBox, Input, Select, Text } from '../components';
-import { useQuery } from '@tanstack/react-query';
-import { getToiletList } from '../utils/toiletAPI';
-import { useNavigate } from 'react-router-dom';
 
-const SI_LIST = [
-  { label: '서울', value: 'seoul' },
-  { label: '대전', value: 'daejeon' },
-  { label: '경기', value: 'gyeonggi' },
-];
+import { Button, CheckBox, Input, Select, Text } from '@components';
 
-const GUNGU_LIST = [
-  { label: '은평', value: 'eunpyeong' },
-  { label: '강북', value: 'gangbuk' },
-  { label: '서대문', value: 'seodaemun' },
-];
+import { SI_LIST, GUNGU_LIST, SIZE_LIST } from './constants';
+import { useLocationListPage } from './useLocationListPage';
 
-const SIZE_LIST = [
-  { label: '10개씩 보기', value: '10' },
-  { label: '20개씩 보기', value: '20' },
-  { label: '30개씩 보기', value: '30' },
-];
-
-const MOCK_ROW_LIST = [
-  {
-    seq: '1',
-    name: '장소1',
-    address: '주소1',
-    tolietType: '화장실1',
-    manageAgency: 'X',
-  },
-  {
-    seq: '2',
-    name: '장소2',
-    address: '주소2',
-    tolietType: '화장실2',
-    manageAgency: 'X',
-  },
-  {
-    seq: '3',
-    name: '장소3',
-    address: '주소3',
-    tolietType: '화장실3',
-    manageAgency: 'X',
-  },
-];
-
-const useLocationListPage = () => {
-  const navigate = useNavigate();
-  const [filter, setFilter] = useState({
-    si: SI_LIST[0].value,
-    gungu: GUNGU_LIST[0].value,
-    value: '',
-  });
-
-  const [pageInfo, setPageInfo] = useState({ page: 1, size: 10, total: 1000 });
-
-  const handleOnChange = (e) => {
-    const { name, value } = e.target;
-
-    setFilter((filter) => ({
-      ...filter,
-      [name]: value,
-    }));
-  };
-
-  const [checkList, setCheckList] = useState(MOCK_ROW_LIST.map(() => false));
-
-  const handleOnToggle = (index) => (e) => {
-    setCheckList((checkList) =>
-      checkList.map((check, i) =>
-        index === 'all' || index === i ? e.target.checked : check,
-      ),
-    );
-  };
-
-  const { data: toiletList } = useQuery(['toiletList'], getToiletList);
-
-  const handleGoDetail = useCallback(
-    (locationId) => navigate(`${locationId}`),
-    [navigate],
-  );
-
-  const handleOnChangePageInfo = (e) => {
-    const { name, value } = e.target;
-
-    setPageInfo((p) => ({
-      ...p,
-      page: name === 'size' ? 1 : Number(value),
-      [name]: Number(value),
-    }));
-  };
-
-  return {
-    filter,
-    checkList,
-    toiletList,
-    pageInfo,
-    handleOnChange,
-    handleOnToggle,
-    handleGoDetail,
-    handleOnChangePageInfo,
-  };
-};
-
-const LocationListPage = memo(() => {
+export const LocationListPage = memo(() => {
   const {
     filter,
     checkList,
@@ -209,8 +110,6 @@ const LocationListPage = memo(() => {
     </Container>
   );
 });
-
-export default LocationListPage;
 
 const Container = styled.div`
   padding: 20px;
