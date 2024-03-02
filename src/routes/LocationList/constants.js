@@ -11,7 +11,9 @@ export const GUNGU_LIST = [
 ];
 
 export const SIZE_LIST = [
-  { label: '10개씩 보기', value: '10' },
-  { label: '20개씩 보기', value: '20' },
-  { label: '30개씩 보기', value: '30' },
+  { label: '10개씩 보기', value: 10 },
+  { label: '20개씩 보기', value: 20 },
+  { label: '30개씩 보기', value: 30 },
 ];
+
+export const DEFAULT_PAGE_INFO = { page: 1, size: 10 };
