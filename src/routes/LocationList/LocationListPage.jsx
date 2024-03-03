@@ -19,6 +19,8 @@ export const LocationListPage = memo(() => {
     handleOnToggle,
     handleGoDetail,
     handleOnChangePageInfo,
+    handleOnSubmit,
+    handleOnReset,
   } = useLocationListPage();
 
   return (
@@ -47,8 +49,10 @@ export const LocationListPage = memo(() => {
             style={{ flex: 2 }}
           />
           <SideWrapper>
-            <Button buttonType="outline">초기화</Button>
-            <Button>검색</Button>
+            <Button buttonType="outline" onClick={handleOnReset}>
+              초기화
+            </Button>
+            <Button onClick={handleOnSubmit}>검색</Button>
           </SideWrapper>
         </FilterWrapper>
         <FilterWrapper isreverse="true" mt="20px">

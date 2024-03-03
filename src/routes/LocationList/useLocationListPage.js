@@ -5,7 +5,49 @@ import { isEqual } from 'lodash';
 
 import { getToiletList, SI_GUN_GU_LIST, getGunguList } from '@utils';
 
-import { SI_LIST, DEFAULT_PAGE_INFO } from './constants';
+import { DEFAULT_PAGE_INFO } from './constants';
+
+const DEFAULT_FILTER = { si: '', gungu: '', value: '' };
+
+const useFilter = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [origin, setOrigin] = useState(DEFAULT_FILTER);
+  const [filter, setFilter] = useState(DEFAULT_FILTER);
+
+  useEffect(() => {
+    setOrigin(
+      Object.keys(DEFAULT_FILTER).reduce((pre, key) => {
+        const valueOfKey = searchParams.getAll(key);
+
+        switch (valueOfKey.length) {
+          case 0:
+            return pre;
+          case 1:
+            return { ...pre, [key]: valueOfKey[0] };
+          default:
+            return { ...pre, [key]: valueOfKey };
+        }
+      }, {}),
+    );
+  }, [searchParams]);
+
+  useEffect(() => setFilter(origin), [origin]);
+
+  const handleOnSubmit = useCallback(() => {
+    if (!isEqual(origin, filter)) {
+      setSearchParams((searchParams) => {
+        Object.entries(filter).forEach(([key, value]) => {
+          searchParams.set(key, value);
+        });
+        return searchParams;
+      });
+    }
+  }, [origin, filter]);
+
+  const handleOnReset = () => setSearchParams(DEFAULT_FILTER);
+
+  return { origin, filter, setFilter, handleOnSubmit, handleOnReset };
+};
 
 /**
  * @description 페이지 정보를 세팅 해준다.
@@ -28,7 +70,13 @@ const usePagination = () => {
     }
 
     if (!isEqual(origin, current)) {
-      setSearchParams(current);
+      setSearchParams((searchParams) => {
+        Object.entries(current).forEach(([key, value]) => {
+          searchParams.set(key, value);
+        });
+
+        return searchParams;
+      });
     }
   }, [searchParams]);
 
@@ -54,13 +102,10 @@ const usePagination = () => {
 export const useLocationListPage = () => {
   const navigate = useNavigate();
   // View
-  const [filter, setFilter] = useState({
-    si: SI_LIST[0].value,
-    gungu: '',
-    value: '',
-  });
-  const [checkList, setCheckList] = useState([]);
+  const { origin, filter, setFilter, handleOnSubmit, handleOnReset } =
+    useFilter();
   const { page, size, setSearchParams } = usePagination();
+  const [checkList, setCheckList] = useState([]);
   const [total, setTotal] = useState(0);
   // Script
   const handleOnToggle = (index) => (e) => {
@@ -89,9 +134,14 @@ export const useLocationListPage = () => {
     (e) => {
       const { name, value } = e.target;
 
-      setSearchParams({
-        page: name === 'size' ? DEFAULT_PAGE_INFO.page : Number(value),
-        size: name === 'page' ? size : Number(value),
+      setSearchParams((searchParams) => {
+        searchParams.set(
+          'page',
+          name === 'size' ? DEFAULT_PAGE_INFO.page : Number(value),
+        );
+        searchParams.set('size', name === 'page' ? size : Number(value));
+
+        return searchParams;
       });
     },
     [size],
@@ -104,8 +154,14 @@ export const useLocationListPage = () => {
   });
 
   const { data: toiletListData } = useQuery(
-    ['toiletList', page, size],
-    () => getToiletList({ index: page - 1, count: size }),
+    ['toiletList', page, size, ...Object.values(origin)],
+    () =>
+      getToiletList({
+        gungu: origin.gungu,
+        searchWord: origin.value,
+        index: page - 1,
+        count: size,
+      }),
     {
       enabled: !!page && !!size,
       onSuccess: ({ totalCount, toiletList }) => {
@@ -127,5 +183,7 @@ export const useLocationListPage = () => {
     handleOnToggle,
     handleGoDetail,
     handleOnChangePageInfo,
+    handleOnSubmit,
+    handleOnReset,
   };
 };
