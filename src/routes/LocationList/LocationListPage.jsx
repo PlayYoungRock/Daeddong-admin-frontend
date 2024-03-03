@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { Button, CheckBox, Input, Select, Text } from '@components';
 
-import { SI_LIST, GUNGU_LIST, SIZE_LIST } from './constants';
+import { SI_LIST, SIZE_LIST } from './constants';
 import { useLocationListPage } from './useLocationListPage';
 
 export const LocationListPage = memo(() => {
@@ -11,6 +11,7 @@ export const LocationListPage = memo(() => {
     filter,
     checkList,
     toiletList,
+    gunguList,
     page,
     size,
     total,
@@ -35,7 +36,7 @@ export const LocationListPage = memo(() => {
             <Select
               name="gungu"
               value={filter.gungu}
-              options={GUNGU_LIST}
+              options={gunguList}
               onChange={handleOnChange}
             />
           </SideWrapper>
