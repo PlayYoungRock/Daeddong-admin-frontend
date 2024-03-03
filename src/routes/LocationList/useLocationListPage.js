@@ -3,9 +3,9 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { isEqual } from 'lodash';
 
-import { getToiletList } from '@utils';
+import { getToiletList, SI_GUN_GU_LIST, getGunguList } from '@utils';
 
-import { SI_LIST, GUNGU_LIST, DEFAULT_PAGE_INFO } from './constants';
+import { SI_LIST, DEFAULT_PAGE_INFO } from './constants';
 
 /**
  * @description 페이지 정보를 세팅 해준다.
@@ -53,11 +53,10 @@ const usePagination = () => {
 
 export const useLocationListPage = () => {
   const navigate = useNavigate();
-
   // View
   const [filter, setFilter] = useState({
     si: SI_LIST[0].value,
-    gungu: GUNGU_LIST[0].value,
+    gungu: '',
     value: '',
   });
   const [checkList, setCheckList] = useState([]);
@@ -99,6 +98,11 @@ export const useLocationListPage = () => {
   );
 
   // API
+  const { data: gunguList } = useQuery([SI_GUN_GU_LIST], getGunguList, {
+    select: (data) => data.map(({ gungu }) => ({ label: gungu, value: gungu })),
+    initialData: [],
+  });
+
   const { data: toiletListData } = useQuery(
     ['toiletList', page, size],
     () => getToiletList({ index: page - 1, count: size }),
@@ -110,10 +114,12 @@ export const useLocationListPage = () => {
       },
     },
   );
+
   return {
     filter,
     checkList,
     toiletList: toiletListData?.toiletList,
+    gunguList,
     page,
     size,
     total,
