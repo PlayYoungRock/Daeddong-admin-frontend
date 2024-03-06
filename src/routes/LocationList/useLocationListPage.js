@@ -39,6 +39,7 @@ const useFilter = () => {
         Object.entries(filter).forEach(([key, value]) => {
           searchParams.set(key, value);
         });
+        searchParams.set('page', 1);
         return searchParams;
       });
     }
@@ -74,7 +75,6 @@ const usePagination = () => {
         Object.entries(current).forEach(([key, value]) => {
           searchParams.set(key, value);
         });
-
         return searchParams;
       });
     }
@@ -137,9 +137,9 @@ export const useLocationListPage = () => {
       setSearchParams((searchParams) => {
         searchParams.set(
           'page',
-          name === 'size' ? DEFAULT_PAGE_INFO.page : Number(value),
+          name === 'page' ? Number(value) :DEFAULT_PAGE_INFO.page ,
         );
-        searchParams.set('size', name === 'page' ? size : Number(value));
+        searchParams.set('size', name === 'size' ? Number(value) :size );
 
         return searchParams;
       });
