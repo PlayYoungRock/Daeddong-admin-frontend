@@ -175,7 +175,7 @@ const LocationDetailPage = () => {
           </FormWrapper>
         ))}
       </FormContainer>
-      <CustomWrapper mt="20px">
+      <CustomWrapper $mt="20px">
         <Button size="large" onClick={handleOnSubmit}>
           {pageType}
         </Button>
@@ -289,5 +289,5 @@ const CustomWrapper = styled.div`
   align-items: center;
 
   gap: 8px;
-  margin-top: ${({ mt }) => mt ?? '0px'};
+  margin-top: ${({ $mt }) => $mt ?? '0px'};
 `;
