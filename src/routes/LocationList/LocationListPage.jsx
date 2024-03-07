@@ -90,7 +90,7 @@ export const LocationListPage = memo(() => {
             </tr>
           </THead>
           <tbody>
-            {toiletList.map(({ name, address, toiletType, openYn }, i) => (
+            {toiletList.map(({ seq, name, address, toiletType, openYn }, i) => (
               <tr key={`location-table-row-${i}`}>
                 <Td>
                   <CheckBox
@@ -99,7 +99,9 @@ export const LocationListPage = memo(() => {
                   />
                 </Td>
                 <Td>{(page - 1) * size + i + 1}</Td>
-                <Td>{name}</Td>
+                <Td onClick={() => handleGoDetail(seq)}>
+                  <CustomText>{name}</CustomText>
+                </Td>
                 <Td>{address}</Td>
                 <Td>{toiletType}</Td>
                 <Td>{openYn}</Td>
