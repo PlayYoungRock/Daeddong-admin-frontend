@@ -126,8 +126,11 @@ export const useLocationListPage = () => {
   };
 
   const handleGoDetail = useCallback(
-    (locationId) => navigate(`${locationId}`),
-    [navigate],
+    (locationId) =>
+      navigate(`${locationId}`, {
+        state: { previousUrl: { ...origin, page, size } },
+      }),
+    [navigate, origin, page, size],
   );
 
   const handleOnChangePageInfo = useCallback(

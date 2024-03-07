@@ -12,11 +12,14 @@ export const Radio = ({ options, className, ...props }) => {
         <Label key={`radio-${props.name}-${label}-${value}-${i}`}>
           {props.value === value ? <Active /> : <Inactive />}
           <Text>{label}</Text>
-          <UnVisibleInput
-            {...props}
-            type="radio"
-            value={value}
-          ></UnVisibleInput>
+          {!props.readOnly && (
+            <UnVisibleInput
+              {...props}
+              type="radio"
+              checked={props.value === value}
+              value={value}
+            />
+          )}
         </Label>
       ))}
     </Container>

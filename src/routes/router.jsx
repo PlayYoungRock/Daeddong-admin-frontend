@@ -18,7 +18,7 @@ export const router = [
         element: <LocationListPage />,
       },
       {
-        path: `${LOCATION_LIST_PAGE}/:locationId`,
+        path: `${LOCATION_LIST_PAGE}/:seq`,
         element: <LocationDetailPage />,
       },
       {

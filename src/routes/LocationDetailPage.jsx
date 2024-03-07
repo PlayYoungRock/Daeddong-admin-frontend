@@ -1,13 +1,18 @@
 import React, { memo, useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { Button, CheckBox, Input, Radio, Select, Text } from '../components';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+
+import { Button, CheckBox, Input, Radio, Select, Text } from '@components';
+import { TOILET_INFO, getToiletInfo } from '@utils';
+
 import { HOME_PAGE, LOCATION_LIST_PAGE } from './router';
-import { useNavigate, useParams } from 'react-router-dom';
+import queryString from 'query-string';
 
 const OPTION_LIST = {
-  tolietType: [
-    { label: '공중화장실', value: 'normal' },
-    { label: '개방화장실', value: 'open' },
+  toiletType: [
+    { label: '공중화장실', value: '공중화장실' },
+    { label: '개방화장실', value: '개방화장실' },
   ],
   babyYn: [
     { label: '가능', value: 'Y' },
@@ -29,24 +34,25 @@ const OPTION_LIST = {
     { label: '있음', value: 'Y' },
     { label: '없음', value: 'N' },
   ],
-  manageYn: [
-    { label: '예', value: 'true' },
-    { label: '아니오', value: 'false' },
+  openYn: [
+    { label: '예', value: 'Y' },
+    { label: '아니오', value: 'N' },
   ],
 };
 
 const useLocationDetailPage = () => {
   const navigate = useNavigate();
-  const { locationId } = useParams();
+  const { state } = useLocation();
+  const { seq } = useParams();
 
-  const pageType = useMemo(() => (locationId ? '수정' : '등록'), [locationId]);
+  const pageType = useMemo(() => (seq ? '수정' : '등록'), [seq]);
 
   const [form, setForm] = useState({
     name: '',
     address: '',
     openTime: '',
     closeTime: '',
-    tolietType: '',
+    toiletType: '',
     countMan: '',
     countWomen: '',
     babyYn: '',
@@ -55,35 +61,51 @@ const useLocationDetailPage = () => {
     alarmYn: '',
     pwdYn: '',
     etc: '',
-    manageYn: '',
+    openYn: '',
   });
 
   const fieldList = useMemo(
     () => [
-      { type: 'input', label: '장소명', name: 'name', value: form.name },
-      { type: 'input', label: '주소', name: 'address', value: form.address },
+      {
+        type: 'input',
+        label: '장소명',
+        readOnly: true,
+        name: 'name',
+        value: form.name,
+      },
+      {
+        type: 'input',
+        label: '주소',
+        readOnly: true,
+        name: 'address',
+        value: form.address,
+      },
       {
         type: 'time',
         label: '개방시간',
+        readOnly: true,
         name: 'time',
         value: [form.openTime, form.closeTime],
       },
       {
         type: 'select',
         label: '화장실 종류',
-        name: 'tolietType',
-        value: form.tolietType,
-        options: OPTION_LIST.tolietType,
+        readOnly: true,
+        name: 'toiletType',
+        value: form.toiletType,
+        options: OPTION_LIST.toiletType,
       },
       {
         type: 'count',
         label: '화장실 개수',
+        readOnly: true,
         name: 'count',
         value: [form.countMan, form.countWomen],
       },
       {
         type: 'select',
         label: '기저귀 교환대 여부',
+        readOnly: true,
         name: 'babyYn',
         value: form.babyYn,
         options: OPTION_LIST.babyYn,
@@ -91,6 +113,7 @@ const useLocationDetailPage = () => {
       {
         type: 'select',
         label: '장애인 화장실 여부',
+        readOnly: true,
         name: 'unusualYn',
         value: form.unusualYn,
         options: OPTION_LIST.unusualYn,
@@ -98,6 +121,7 @@ const useLocationDetailPage = () => {
       {
         type: 'select',
         label: 'CCTV 여부',
+        readOnly: true,
         name: 'cctvYn',
         value: form.cctvYn,
         options: OPTION_LIST.cctvYn,
@@ -105,6 +129,7 @@ const useLocationDetailPage = () => {
       {
         type: 'select',
         label: '비상벨 여부',
+        readOnly: true,
         name: 'alarmYn',
         value: form.alarmYn,
         options: OPTION_LIST.alarmYn,
@@ -112,22 +137,30 @@ const useLocationDetailPage = () => {
       {
         type: 'select',
         label: '비밀번호 여부',
+        readOnly: true,
         name: 'pwdYn',
         value: form.pwdYn,
         options: OPTION_LIST.pwdYn,
       },
-      { type: 'input', label: '비고', name: 'etc', value: form.etc },
+      {
+        type: 'input',
+        label: '비고',
+        readOnly: true,
+        name: 'etc',
+        value: form.etc,
+      },
       {
         type: 'radio',
+        readOnly: true,
         label: '승인여부',
-        name: 'manageYn',
-        value: form.manageYn,
-        options: OPTION_LIST.manageYn,
+        name: 'openYn',
+        value: form.openYn,
+        options: OPTION_LIST.openYn,
       },
     ],
     [form],
   );
-
+  // Script
   const handleOnChange = (e) => {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
@@ -135,13 +168,34 @@ const useLocationDetailPage = () => {
 
   const handleOnSubmit = useCallback(() => {
     console.log(form);
-    if (locationId) {
+    if (seq) {
       // TODO 수정api
     }
     // TODO 생성 api
-  }, [form, locationId]);
+  }, [form, seq]);
 
-  const handleGoList = () => navigate(`${HOME_PAGE}${LOCATION_LIST_PAGE}`);
+  const handleGoList = useCallback(() => {
+    if (state?.previousUrl) {
+      navigate(-1);
+      return;
+    }
+    navigate(`${HOME_PAGE}${LOCATION_LIST_PAGE}`);
+  }, [state, navigate]);
+  // API
+  useQuery([TOILET_INFO, seq], () => getToiletInfo(seq), {
+    enabled: !!seq,
+    onSuccess: ({ openTime, closeTime, unusualYn, ...data }) => {
+      setForm({
+        ...data,
+        openTime: openTime.split('~')[0],
+        closeTime:
+          closeTime.split('~')[1] === '24:00'
+            ? '00:00'
+            : closeTime.split('~')[1],
+        unusualYn: !!unusualYn ? 'Y' : 'N',
+      });
+    },
+  });
 
   return {
     pageType,
