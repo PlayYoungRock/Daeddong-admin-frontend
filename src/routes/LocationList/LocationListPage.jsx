@@ -43,8 +43,8 @@ export const LocationListPage = memo(() => {
             />
           </SideWrapper>
           <Input
-            name="value"
-            value={filter.value}
+            name="searchWord"
+            value={filter.searchWord}
             onChange={handleOnChange}
             style={{ flex: 2 }}
           />

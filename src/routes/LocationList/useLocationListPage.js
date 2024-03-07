@@ -7,7 +7,7 @@ import { getToiletList, SI_GUN_GU_LIST, getGunguList } from '@utils';
 
 import { DEFAULT_PAGE_INFO } from './constants';
 
-const DEFAULT_FILTER = { si: '', gungu: '', value: '' };
+const DEFAULT_FILTER = { si: '', gungu: '', searchWord: '' };
 
 const useFilter = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -158,7 +158,7 @@ export const useLocationListPage = () => {
     () =>
       getToiletList({
         gungu: origin.gungu,
-        searchWord: origin.value,
+        searchWord: origin.searchWord,
         index: page - 1,
         count: size,
       }),
