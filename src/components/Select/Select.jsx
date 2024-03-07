@@ -16,12 +16,15 @@ export const Select = ({
   const dropDownRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleOnChange = useCallback((e) => {
-    if (onChange) {
-      setIsOpen(false);
-      onChange(e);
-    }
-  }, []);
+  const handleOnChange = useCallback(
+    (e) => {
+      if (onChange) {
+        setIsOpen(false);
+        onChange(e);
+      }
+    },
+    [onChange],
+  );
 
   useEffect(() => {
     if (!window || !dropDownRef.current || !selectRef.current) return;
