@@ -1,12 +1,13 @@
 import React, { memo, useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 
 import { Button, CheckBox, Input, Radio, Select, Text } from '@components';
 import { TOILET_INFO, getToiletInfo } from '@utils';
 
 import { HOME_PAGE, LOCATION_LIST_PAGE } from './router';
+import queryString from 'query-string';
 
 const OPTION_LIST = {
   toiletType: [
@@ -41,7 +42,9 @@ const OPTION_LIST = {
 
 const useLocationDetailPage = () => {
   const navigate = useNavigate();
+  const { state } = useLocation();
   const { seq } = useParams();
+
   const pageType = useMemo(() => (seq ? '수정' : '등록'), [seq]);
 
   const [form, setForm] = useState({
@@ -171,7 +174,13 @@ const useLocationDetailPage = () => {
     // TODO 생성 api
   }, [form, seq]);
 
-  const handleGoList = () => navigate(`${HOME_PAGE}${LOCATION_LIST_PAGE}`);
+  const handleGoList = useCallback(() => {
+    if (state?.previousUrl) {
+      navigate(-1);
+      return;
+    }
+    navigate(`${HOME_PAGE}${LOCATION_LIST_PAGE}`);
+  }, [state, navigate]);
   // API
   useQuery([TOILET_INFO, seq], () => getToiletInfo(seq), {
     enabled: !!seq,
