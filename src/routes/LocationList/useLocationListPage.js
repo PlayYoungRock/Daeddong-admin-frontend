@@ -7,7 +7,7 @@ import { getToiletList, SI_GUN_GU_LIST, getGunguList } from '@utils';
 
 import { DEFAULT_PAGE_INFO } from './constants';
 
-const DEFAULT_FILTER = { si: '', gungu: '', value: '' };
+const DEFAULT_FILTER = { si: '', gungu: '', searchWord: '' };
 
 const useFilter = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -39,12 +39,13 @@ const useFilter = () => {
         Object.entries(filter).forEach(([key, value]) => {
           searchParams.set(key, value);
         });
+        searchParams.set('page', DEFAULT_PAGE_INFO.page);
         return searchParams;
       });
     }
   }, [origin, filter]);
 
-  const handleOnReset = () => setSearchParams(DEFAULT_FILTER);
+  const handleOnReset = () => setSearchParams(DEFAULT_PAGE_INFO);
 
   return { origin, filter, setFilter, handleOnSubmit, handleOnReset };
 };
@@ -74,7 +75,6 @@ const usePagination = () => {
         Object.entries(current).forEach(([key, value]) => {
           searchParams.set(key, value);
         });
-
         return searchParams;
       });
     }
@@ -137,14 +137,14 @@ export const useLocationListPage = () => {
       setSearchParams((searchParams) => {
         searchParams.set(
           'page',
-          name === 'size' ? DEFAULT_PAGE_INFO.page : Number(value),
+          name === 'page' ? Number(value) : DEFAULT_PAGE_INFO.page,
         );
-        searchParams.set('size', name === 'page' ? size : Number(value));
+        searchParams.set('size', name === 'size' ? Number(value) : size);
 
         return searchParams;
       });
     },
-    [size],
+    [size, setSearchParams],
   );
 
   // API
@@ -158,7 +158,7 @@ export const useLocationListPage = () => {
     () =>
       getToiletList({
         gungu: origin.gungu,
-        searchWord: origin.value,
+        searchWord: origin.searchWord,
         index: page - 1,
         count: size,
       }),

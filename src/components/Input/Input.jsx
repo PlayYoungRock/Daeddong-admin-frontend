@@ -1,8 +1,8 @@
 import React from 'react';
 import styled from 'styled-components';
 
-export const Input = ({ width = '100%', height = 32, ...props }) => {
-  return <StyledInput {...props} $width={width} />;
+export const Input = ({ width = '100%', height = 32, value, ...props }) => {
+  return <StyledInput {...props} $width={width} value={value || ''} />;
 };
 
 const StyledInput = styled.input`

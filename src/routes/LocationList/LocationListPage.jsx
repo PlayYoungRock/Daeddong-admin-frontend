@@ -43,8 +43,8 @@ export const LocationListPage = memo(() => {
             />
           </SideWrapper>
           <Input
-            name="value"
-            value={filter.value}
+            name="searchWord"
+            value={filter.searchWord}
             onChange={handleOnChange}
             style={{ flex: 2 }}
           />
@@ -55,7 +55,7 @@ export const LocationListPage = memo(() => {
             <Button onClick={handleOnSubmit}>검색</Button>
           </SideWrapper>
         </FilterWrapper>
-        <FilterWrapper isreverse="true" mt="20px">
+        <FilterWrapper $isReverse="true" $mt="20px">
           <Button width="100px" buttonType="outline">
             다운로드
           </Button>
@@ -136,8 +136,8 @@ const FilterWrapper = styled.div`
   width: 100%;
   align-items: center;
   gap: 20px;
-  margin-top: ${({ mt }) => (mt ? mt : 0)};
-  justify-content: ${({ isreverse }) => (isreverse ? 'end' : 'start')};
+  margin-top: ${({ $mt }) => ($mt ? $mt : 0)};
+  justify-content: ${({ $isReverse }) => ($isReverse ? 'end' : 'start')};
 `;
 
 const Divider = styled.div`
