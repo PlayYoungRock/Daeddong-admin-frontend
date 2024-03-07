@@ -63,6 +63,7 @@ export const Select = ({
               <Label>
                 <UnVisibleInput
                   type="radio"
+                  checked={false}
                   value={option.value}
                   name={name}
                   onChange={handleOnChange}
