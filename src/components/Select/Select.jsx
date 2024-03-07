@@ -9,12 +9,18 @@ export const Select = ({
   value = null,
   options = [],
   name,
+  readOnly,
   onChange,
 }) => {
   const uniqueId = useId();
   const selectRef = useRef(null);
   const dropDownRef = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleOnToggle = useCallback(() => {
+    if (readOnly) return;
+    setIsOpen((state) => !state);
+  }, [readOnly]);
 
   const handleOnChange = useCallback(
     (e) => {
@@ -49,15 +55,14 @@ export const Select = ({
   return (
     <SelectContainer
       ref={selectRef}
+      $readOnly={readOnly}
       $width={width}
       $height={height}
-      onClick={() => setIsOpen((state) => !state)}
+      onClick={handleOnToggle}
     >
       {options.find(({ value: optionValue }) => optionValue === value)?.label ??
         null}
-      <Wrapper>
-        <Arrow />
-      </Wrapper>
+      <Wrapper>{!readOnly && <Arrow />}</Wrapper>
 
       <Dropdown $isOpen={isOpen} ref={dropDownRef}>
         {options.length ? (
@@ -98,7 +103,7 @@ const SelectContainer = styled.div`
   height: ${(props) =>
     Number.isInteger(props.$height) ? `${props.$height}px` : props.$height};
   border-radius: 4px;
-  cursor: pointer;
+  cursor: ${({ $readOnly }) => ($readOnly ? 'default' : 'pointer')};
 `;
 
 const Wrapper = styled.div`
