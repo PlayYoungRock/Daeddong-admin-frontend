@@ -39,13 +39,13 @@ const useFilter = () => {
         Object.entries(filter).forEach(([key, value]) => {
           searchParams.set(key, value);
         });
-        searchParams.set('page', 1);
+        searchParams.set('page', DEFAULT_PAGE_INFO.page);
         return searchParams;
       });
     }
   }, [origin, filter]);
 
-  const handleOnReset = () => setSearchParams(DEFAULT_FILTER);
+  const handleOnReset = () => setSearchParams(DEFAULT_PAGE_INFO);
 
   return { origin, filter, setFilter, handleOnSubmit, handleOnReset };
 };
@@ -137,14 +137,14 @@ export const useLocationListPage = () => {
       setSearchParams((searchParams) => {
         searchParams.set(
           'page',
-          name === 'page' ? Number(value) :DEFAULT_PAGE_INFO.page ,
+          name === 'page' ? Number(value) : DEFAULT_PAGE_INFO.page,
         );
-        searchParams.set('size', name === 'size' ? Number(value) :size );
+        searchParams.set('size', name === 'size' ? Number(value) : size);
 
         return searchParams;
       });
     },
-    [size],
+    [size, setSearchParams],
   );
 
   // API
