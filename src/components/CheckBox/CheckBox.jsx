@@ -6,7 +6,7 @@ import CheckIcon from '@assets/check-box.svg?react';
 export const CheckBox = memo(({ checked, label, ...props }) => {
   return (
     <Label>
-      <AbstractCheckBox type="checkbox" checked={checked} {...props} />
+      <AbstractCheckBox {...props} type="checkbox" checked={checked || false} />
       <CheckBoxWrapper>{checked && <CheckIcon />}</CheckBoxWrapper>
       {label}
     </Label>
