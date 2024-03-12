@@ -1,14 +1,27 @@
 import React, { useCallback, useState } from 'react';
 import styled from 'styled-components';
 import { useMutation } from '@tanstack/react-query';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 import { Button, Input, Text } from '@components';
 import { postSignIn } from '@utils';
 
+import { HOME_PAGE, LOCATION_LIST_PAGE } from './router';
+
 const useSignInViewModel = () => {
   const [form, setForm] = useState({ username: '', password: '' });
+  const navigate = useNavigate();
 
-  const { mutate } = useMutation({ mutationFn: postSignIn });
+  const { mutate } = useMutation({
+    mutationFn: postSignIn,
+    onSuccess: () => navigate(`${HOME_PAGE}${LOCATION_LIST_PAGE}`),
+    onError: (error) => {
+      if (axios.isAxiosError(error)) {
+        alert('회원정보가 일치하지 않습니다.');
+      }
+    },
+  });
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
@@ -38,6 +51,7 @@ const SignInPage = () => {
             onChange={handleOnChange}
           />
           <Input
+            type="password"
             placeholder="password"
             name="password"
             value={form.password}
