@@ -10,12 +10,12 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   (req) => req,
-  (error) => error,
+  (error) => Promise.reject(error),
 );
 
 instance.interceptors.response.use(
   (res) => res,
-  (error) => error,
+  (error) => Promise.reject(error),
 );
 
 export const Http = {
