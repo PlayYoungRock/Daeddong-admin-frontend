@@ -17,10 +17,7 @@ const useSignInViewModel = () => {
   const { mutate } = useMutation({
     mutationFn: postSignIn,
     onSuccess: ({ accessToken, refreshToken }) => {
-      localStorage.setItem(
-        ADMIN_TOKEN,
-        JSON.stringify({ accessToken, refreshToken }),
-      );
+      localStorage.setItem(ADMIN_TOKEN, JSON.stringify({ accessToken, refreshToken }));
       navigate(`${HOME_PAGE}${LOCATION_LIST_PAGE}`);
     },
     onError: (error) => {

@@ -1,6 +1,7 @@
-import axios from 'axios';
+import axios, { isAxiosError } from 'axios';
+
+import { ERROR_PAGE } from '../routes';
 import { ADMIN_TOKEN } from './signInAPI';
-import { jwtDecode } from 'jwt-decode';
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_BASE_API_URL,
@@ -25,7 +26,21 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   (res) => res,
-  (error) => Promise.reject(error),
+  (error) => {
+    if (isAxiosError(error)) {
+      switch (error.response.status) {
+        case 403:
+        case 500: {
+          location.href = `${ERROR_PAGE}/${error.response.status}`;
+          return;
+        }
+        default:
+          return Promise.reject(error);
+      }
+    }
+
+    return Promise.reject(error);
+  },
 );
 
 export const Http = {
