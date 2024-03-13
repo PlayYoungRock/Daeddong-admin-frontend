@@ -8,6 +8,7 @@ import { Button, Input, Text } from '@components';
 import { postSignIn } from '@utils';
 
 import { HOME_PAGE, LOCATION_LIST_PAGE } from './router';
+import { ADMIN_TOKEN } from '@utils';
 
 const useSignInViewModel = () => {
   const [form, setForm] = useState({ username: '', password: '' });
@@ -15,7 +16,13 @@ const useSignInViewModel = () => {
 
   const { mutate } = useMutation({
     mutationFn: postSignIn,
-    onSuccess: () => navigate(`${HOME_PAGE}${LOCATION_LIST_PAGE}`),
+    onSuccess: ({ accessToken, refreshToken }) => {
+      localStorage.setItem(
+        ADMIN_TOKEN,
+        JSON.stringify({ accessToken, refreshToken }),
+      );
+      navigate(`${HOME_PAGE}${LOCATION_LIST_PAGE}`);
+    },
     onError: (error) => {
       if (axios.isAxiosError(error)) {
         alert('회원정보가 일치하지 않습니다.');
