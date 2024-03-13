@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { ADMIN_TOKEN } from './signInAPI';
+import { jwtDecode } from 'jwt-decode';
 
 const instance = axios.create({
   baseURL: import.meta.env.VITE_BASE_API_URL,
@@ -9,13 +11,21 @@ const instance = axios.create({
 });
 
 instance.interceptors.request.use(
-  (req) => req,
-  (error) => error,
+  (req) => {
+    const token = JSON.parse(localStorage.getItem(ADMIN_TOKEN) ?? '{}');
+
+    if (!token?.accessToken) return req;
+
+    req.headers.Authorization = `Bearer ${token.accessToken}`;
+
+    return req;
+  },
+  (error) => Promise.reject(error),
 );
 
 instance.interceptors.response.use(
   (res) => res,
-  (error) => error,
+  (error) => Promise.reject(error),
 );
 
 export const Http = {

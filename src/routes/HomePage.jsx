@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import { ADMIN_LIST_PAGE, LOCATION_LIST_PAGE } from './router';
-import { Text } from '../components';
+import { ADMIN_LIST_PAGE, HOME_PAGE, LOCATION_LIST_PAGE, SIGN_IN_PAGE } from './router';
+import { Text } from '@components';
+import { ADMIN_TOKEN } from '@utils';
+import { jwtDecode } from 'jwt-decode';
 
 const useHomePage = () => {
   const navigationList = [
@@ -12,6 +14,21 @@ const useHomePage = () => {
   ];
 
   const navigate = useNavigate();
+  // 로그인확인
+  useEffect(() => {
+    // NOTE expired나 refresh 정책이 필요함
+    const { accessToken } = JSON.parse(localStorage.getItem(ADMIN_TOKEN) ?? '{}');
+    if (!accessToken) {
+      navigate(`${HOME_PAGE}${SIGN_IN_PAGE}`);
+      return;
+    }
+
+    const { auth } = jwtDecode(accessToken);
+    if (auth !== 'ROLE_ADMIN') {
+      navigate(`${HOME_PAGE}${SIGN_IN_PAGE}`);
+      return;
+    }
+  }, [navigate]);
   return { navigationList, navigate };
 };
 
