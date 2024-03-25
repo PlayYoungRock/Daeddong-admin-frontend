@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Generate Environment Variables File
+        run: |
+          echo "VITE_BASE_API_URL=$VITE_BASE_API_URL" >> .env
+        env:
+          VITE_BASE_API_URL: ${{ secrets.PROD_BASE_API_URL }}
+
+      - name: Build
+        run: yarn build
