@@ -51,4 +51,4 @@ jobs:
           sudo apt-get install -y awscli
 
       - name: Sync build to S3 bucket
-        run: aws s3 sync dist/ s3://admin-daeddong-front --recursive
+        run: aws s3 sync dist/ s3://admin-daeddong-front --recursive -x
