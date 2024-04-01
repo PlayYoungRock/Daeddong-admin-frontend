@@ -32,7 +32,7 @@ instance.interceptors.response.use(
         case 403:
         case 500: {
           location.href = `${ERROR_PAGE}/${error.response.status}`;
-          return;
+          return Promise.reject(error);
         }
         default:
           return Promise.reject(error);
@@ -51,4 +51,46 @@ export const Http = {
   put: (url, data, config) => instance.put(url, data, config),
   patch: (url, data, config) => instance.patch(url, data, config),
   head: (url, config) => instance.head(url, config),
+};
+
+const authInstance = axios.create({
+  baseURL: import.meta.env.VITE_AUTH_API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+    accept: '*/*',
+  },
+});
+
+authInstance.interceptors.request.use(
+  (req) => req,
+  (error) => Promise.reject(error),
+);
+
+authInstance.interceptors.response.use(
+  (res) => res,
+  (error) => {
+    if (isAxiosError(error)) {
+      switch (error.response.status) {
+        case 403:
+        case 500: {
+          location.href = `${ERROR_PAGE}/${error.response.status}`;
+          return Promise.reject(error);
+        }
+        default:
+          return Promise.reject(error);
+      }
+    }
+
+    return Promise.reject(error);
+  },
+);
+
+export const authHttp = {
+  get: (url, config) => authInstance.get(url, config),
+  post: (url, data, config) => authInstance.post(url, data, config),
+  delete: (url, config) => authInstance.delete(url, config),
+  option: (url, config) => authInstance.options(url, config),
+  put: (url, data, config) => authInstance.put(url, data, config),
+  patch: (url, data, config) => authInstance.patch(url, data, config),
+  head: (url, config) => authInstance.head(url, config),
 };

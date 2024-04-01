@@ -25,7 +25,8 @@ jobs:
         run: |
           echo "VITE_BASE_API_URL=$VITE_BASE_API_URL" >> .env
         env:
-          VITE_BASE_API_URL: ${{ secrets.PROD_BASE_API_URL }}
+          VITE_BASE_API_URL: ${{ secrets.BASE_API_URL }}
+          VITE_AUTH_API_URL: ${{ secrets.AUTH_API_URL }}
 
       - name: Build
         run: yarn build
