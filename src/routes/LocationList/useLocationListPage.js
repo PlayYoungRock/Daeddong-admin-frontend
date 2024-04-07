@@ -3,11 +3,18 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { isEqual } from 'lodash';
 
-import { SI_DO_LIST, SI_GUN_GU_LIST, getSidoList, getSiGunguList } from '@utils';
+import {
+  SI_DO_LIST,
+  SI_GUN_GU_LIST,
+  TOILET_LIST,
+  getSidoList,
+  getSiGunguList,
+  getToiletList,
+} from '@utils';
 
 import { DEFAULT_PAGE_INFO } from './constants';
 
-const DEFAULT_FILTER = { si: '', gungu: '', searchWord: '' };
+const DEFAULT_FILTER = { sido: '', gungu: '', searchWord: '' };
 
 const useFilter = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -146,44 +153,43 @@ export const useLocationListPage = () => {
 
   // API
   const { data: siList } = useQuery([SI_DO_LIST], getSidoList, {
-    select: (data) => data.map(({ si }) => ({ label: si, value: si })),
+    select: (data) => data.filter((d) => !!d).map(({ si }) => ({ label: si, value: si })),
     initialData: [],
     cacheTime: Infinity,
   });
 
   const { data: gunguList } = useQuery(
-    [SI_GUN_GU_LIST, filter.si],
-    () => getSiGunguList(filter.si),
+    [SI_GUN_GU_LIST, filter.sido],
+    () => getSiGunguList(filter.sido),
     {
-      enabled: !!filter.si,
+      enabled: !!filter.sido,
       select: (data) => data.map(({ gungu }) => ({ label: gungu, value: gungu })),
       initialData: [],
       cacheTime: Infinity,
     },
   );
 
-  // const { data: toiletListData } = useQuery(
-  //   ['toiletList', page, size, ...Object.values(origin)],
-  //   () =>
-  //     getToiletList({
-  //       gungu: origin.gungu,
-  //       searchWord: origin.searchWord,
-  //       index: page - 1,
-  //       count: size,
-  //     }),
-  //   {
-  //     enabled: !!page && !!size,
-  //     onSuccess: ({ totalCount, toiletList }) => {
-  //       setCheckList(Array.from({ length: toiletList.length }, () => false));
-  //       setTotal(totalCount);
-  //     },
-  //   },
-  // );
+  const { data: toiletListData } = useQuery(
+    [TOILET_LIST, page, size, origin],
+    () =>
+      getToiletList({
+        ...origin,
+        index: page - 1,
+        count: size,
+      }),
+    {
+      enabled: !!page && !!size && !!origin,
+      onSuccess: ({ totalCount, toiletList }) => {
+        setCheckList(Array.from({ length: toiletList.length }, () => false));
+        setTotal(totalCount);
+      },
+    },
+  );
 
   return {
     filter,
     checkList,
-    toiletList: [],
+    toiletList: toiletListData?.toiletList ?? [],
     siList,
     gunguList,
     page,

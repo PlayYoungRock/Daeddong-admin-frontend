@@ -31,8 +31,8 @@ export const LocationListPage = memo(() => {
           <SideWrapper>
             <Select
               width="100%"
-              name="si"
-              value={filter.si}
+              name="sido"
+              value={filter.sido}
               options={siList}
               onChange={handleOnChange}
             />
