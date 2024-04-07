@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { isEqual } from 'lodash';
 
-import { getToiletList, SI_GUN_GU_LIST, getGunguList } from '@utils';
+import { SI_DO_LIST, SI_GUN_GU_LIST, getSidoList, getSiGunguList } from '@utils';
 
 import { DEFAULT_PAGE_INFO } from './constants';
 
@@ -102,17 +102,14 @@ const usePagination = () => {
 export const useLocationListPage = () => {
   const navigate = useNavigate();
   // View
-  const { origin, filter, setFilter, handleOnSubmit, handleOnReset } =
-    useFilter();
+  const { origin, filter, setFilter, handleOnSubmit, handleOnReset } = useFilter();
   const { page, size, setSearchParams } = usePagination();
   const [checkList, setCheckList] = useState([]);
   const [total, setTotal] = useState(0);
   // Script
   const handleOnToggle = (index) => (e) => {
     setCheckList((checkList) =>
-      checkList.map((check, i) =>
-        index === 'all' || index === i ? e.target.checked : check,
-      ),
+      checkList.map((check, i) => (index === 'all' || index === i ? e.target.checked : check)),
     );
   };
 
@@ -138,10 +135,7 @@ export const useLocationListPage = () => {
       const { name, value } = e.target;
 
       setSearchParams((searchParams) => {
-        searchParams.set(
-          'page',
-          name === 'page' ? Number(value) : DEFAULT_PAGE_INFO.page,
-        );
+        searchParams.set('page', name === 'page' ? Number(value) : DEFAULT_PAGE_INFO.page);
         searchParams.set('size', name === 'size' ? Number(value) : size);
 
         return searchParams;
@@ -151,33 +145,46 @@ export const useLocationListPage = () => {
   );
 
   // API
-  const { data: gunguList } = useQuery([SI_GUN_GU_LIST], getGunguList, {
-    select: (data) => data.map(({ gungu }) => ({ label: gungu, value: gungu })),
+  const { data: siList } = useQuery([SI_DO_LIST], getSidoList, {
+    select: (data) => data.map(({ si }) => ({ label: si, value: si })),
     initialData: [],
+    cacheTime: Infinity,
   });
 
-  const { data: toiletListData } = useQuery(
-    ['toiletList', page, size, ...Object.values(origin)],
-    () =>
-      getToiletList({
-        gungu: origin.gungu,
-        searchWord: origin.searchWord,
-        index: page - 1,
-        count: size,
-      }),
+  const { data: gunguList } = useQuery(
+    [SI_GUN_GU_LIST, filter.si],
+    () => getSiGunguList(filter.si),
     {
-      enabled: !!page && !!size,
-      onSuccess: ({ totalCount, toiletList }) => {
-        setCheckList(Array.from({ length: toiletList.length }, () => false));
-        setTotal(totalCount);
-      },
+      enabled: !!filter.si,
+      select: (data) => data.map(({ gungu }) => ({ label: gungu, value: gungu })),
+      initialData: [],
+      cacheTime: Infinity,
     },
   );
+
+  // const { data: toiletListData } = useQuery(
+  //   ['toiletList', page, size, ...Object.values(origin)],
+  //   () =>
+  //     getToiletList({
+  //       gungu: origin.gungu,
+  //       searchWord: origin.searchWord,
+  //       index: page - 1,
+  //       count: size,
+  //     }),
+  //   {
+  //     enabled: !!page && !!size,
+  //     onSuccess: ({ totalCount, toiletList }) => {
+  //       setCheckList(Array.from({ length: toiletList.length }, () => false));
+  //       setTotal(totalCount);
+  //     },
+  //   },
+  // );
 
   return {
     filter,
     checkList,
-    toiletList: toiletListData?.toiletList,
+    toiletList: [],
+    siList,
     gunguList,
     page,
     size,
