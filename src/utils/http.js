@@ -62,14 +62,22 @@ const authInstance = axios.create({
 });
 
 authInstance.interceptors.request.use(
-  (req) => req,
+  (req) => {
+    const token = JSON.parse(localStorage.getItem(ADMIN_TOKEN) ?? '{}');
+
+    if (!token?.accessToken) return req;
+
+    req.headers.Authorization = `Bearer ${token.accessToken}`;
+
+    return req;
+  },
   (error) => Promise.reject(error),
 );
 
 authInstance.interceptors.response.use(
   (res) => res,
   (error) => {
-    if (isAxiosError(error)) {
+    if (isAxiosError(error) && !!error.response) {
       switch (error.response.status) {
         case 403:
         case 500: {

@@ -1,34 +1,31 @@
-import { Http } from './http';
+import { Http, authHttp } from './http';
 import queryString from 'query-string';
 
 export const TOILET_LIST = 'toiletList';
+export const SI_DO_LIST = 'sidoList';
 export const SI_GUN_GU_LIST = 'sigunguList';
 export const TOILET_INFO = 'toiletInfo';
 
-/**
- * @returns {Object}
- * @property {number} totalCount
- * @property {Array<Object>} toiletList
- */
-export const getToiletList = async (query) => {
-  const { data } = await Http.get(
-    `${TOILET_LIST}?${queryString.stringify(query)}`,
-  );
+export const getSidoList = async () => {
+  const { data } = await Http.get(`${SI_DO_LIST}`);
 
-  return data;
+  return data.sidoList;
 };
 
-/**
- * @description 시군구 api 리소스가 부족하여 서울시의 군구만 받도록한다.
- */
-export const getGunguList = async () => {
-  const { data } = await Http.get(`${SI_GUN_GU_LIST}`);
+export const getSiGunguList = async (sido) => {
+  const { data } = await Http.get(`${SI_GUN_GU_LIST}`, { params: { sido } });
 
   return data.sigunguList;
 };
 
+export const getToiletList = async (query) => {
+  const { data } = await authHttp.get(`${TOILET_LIST}`, { params: query });
+
+  return data;
+};
+
 export const getToiletInfo = async (id) => {
-  const { data } = await Http.get(`${TOILET_INFO}?seq=${id}`);
+  const { data } = await authHttp.get(`${TOILET_INFO}?seq=${id}`);
 
   return data.toiletInfo;
 };

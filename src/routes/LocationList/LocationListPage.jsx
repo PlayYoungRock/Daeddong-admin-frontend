@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import { Button, CheckBox, Input, Select, Text } from '@components';
 
-import { SI_LIST, SIZE_LIST } from './constants';
+import { SIZE_LIST } from './constants';
 import { useLocationListPage } from './useLocationListPage';
 
 export const LocationListPage = memo(() => {
@@ -11,6 +11,7 @@ export const LocationListPage = memo(() => {
     filter,
     checkList,
     toiletList,
+    siList,
     gunguList,
     page,
     size,
@@ -30,9 +31,9 @@ export const LocationListPage = memo(() => {
           <SideWrapper>
             <Select
               width="100%"
-              name="si"
-              value={filter.si}
-              options={SI_LIST}
+              name="sido"
+              value={filter.sido}
+              options={siList}
               onChange={handleOnChange}
             />
             <Select
@@ -93,10 +94,7 @@ export const LocationListPage = memo(() => {
             {toiletList.map(({ seq, name, address, toiletType, openYn }, i) => (
               <tr key={`location-table-row-${i}`}>
                 <Td>
-                  <CheckBox
-                    checked={checkList[i]}
-                    onChange={handleOnToggle(i)}
-                  />
+                  <CheckBox checked={checkList[i]} onChange={handleOnToggle(i)} />
                 </Td>
                 <Td>{(page - 1) * size + i + 1}</Td>
                 <Td onClick={() => handleGoDetail(seq)}>
@@ -110,12 +108,7 @@ export const LocationListPage = memo(() => {
           </tbody>
         </Table>
       )}
-      <Pagination
-        page={page}
-        size={size}
-        total={total}
-        onChange={handleOnChangePageInfo}
-      />
+      <Pagination page={page} size={size} total={total} onChange={handleOnChangePageInfo} />
     </Container>
   );
 });
@@ -181,8 +174,7 @@ const Pagination = memo(({ page, size, total, onChange }) => {
   );
 
   const pageList = useMemo(
-    () =>
-      Array.from({ length: endPage - startPage }, (_, i) => startPage + i + 1),
+    () => Array.from({ length: endPage - startPage }, (_, i) => startPage + i + 1),
     [startPage, endPage],
   );
 
@@ -198,23 +190,15 @@ const Pagination = memo(({ page, size, total, onChange }) => {
   return (
     <PaginationContainer>
       {startPage !== 0 && (
-        <CustomText onClick={() => handleOnChange(startPage - 9)}>
-          이전
-        </CustomText>
+        <CustomText onClick={() => handleOnChange(startPage - 9)}>이전</CustomText>
       )}
       {pageList.map((p, i) => (
-        <CustomText
-          key={i + 1}
-          $isSelected={p === page}
-          onClick={() => handleOnChange(p)}
-        >
+        <CustomText key={i + 1} $isSelected={p === page} onClick={() => handleOnChange(p)}>
           {p}
         </CustomText>
       ))}
       {endPage !== totalPage && (
-        <CustomText onClick={() => handleOnChange(endPage + 1)}>
-          다음
-        </CustomText>
+        <CustomText onClick={() => handleOnChange(endPage + 1)}>다음</CustomText>
       )}
     </PaginationContainer>
   );
