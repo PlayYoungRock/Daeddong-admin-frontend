@@ -1,13 +1,14 @@
-import React, { memo, useCallback, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 
-import { Button, CheckBox, Input, Radio, Select, Text } from '@components';
+import { NAVER_MAP_SDK_URL } from '@constants';
+import { Button, CheckBox, Input, Radio, Select, Text, Map } from '@components';
 import { TOILET_INFO, getToiletInfo } from '@utils';
+import { useScript } from '@hooks';
 
 import { HOME_PAGE, LOCATION_LIST_PAGE } from './router';
-import queryString from 'query-string';
 
 const OPTION_LIST = {
   toiletType: [
@@ -50,6 +51,8 @@ const useLocationDetailPage = () => {
   const [form, setForm] = useState({
     name: '',
     address: '',
+    latitude: 37.3595704,
+    longitude: 127.105399,
     openTime: '',
     closeTime: '',
     toiletType: '',
@@ -74,11 +77,12 @@ const useLocationDetailPage = () => {
         value: form.name,
       },
       {
-        type: 'input',
+        type: 'customMap',
         label: '주소',
         readOnly: true,
-        name: 'address',
-        value: form.address,
+        name: 'coord',
+        value: [form.latitude, form.longitude, form.address],
+        onClick: ({ x, y }) => setForm((f) => ({ ...f, latitude: y, longitude: x })),
       },
       {
         type: 'time',
@@ -188,10 +192,7 @@ const useLocationDetailPage = () => {
       setForm({
         ...data,
         openTime: openTime.split('~')[0],
-        closeTime:
-          closeTime.split('~')[1] === '24:00'
-            ? '00:00'
-            : closeTime.split('~')[1],
+        closeTime: closeTime.split('~')[1] === '24:00' ? '00:00' : closeTime.split('~')[1],
         unusualYn: !!unusualYn ? 'Y' : 'N',
       });
     },
@@ -293,20 +294,8 @@ const FieldItem = memo(({ type, ...props }) => {
 
       return (
         <CustomWrapper>
-          <Input
-            width="300px"
-            type="time"
-            {...props}
-            name="openTime"
-            value={open}
-          />
-          <Input
-            width="300px"
-            type="time"
-            {...props}
-            name="closeTime"
-            value={close}
-          />
+          <Input width="300px" type="time" {...props} name="openTime" value={open} />
+          <Input width="300px" type="time" {...props} name="closeTime" value={close} />
         </CustomWrapper>
       );
     }
@@ -315,22 +304,52 @@ const FieldItem = memo(({ type, ...props }) => {
       return (
         <CustomWrapper>
           <Text>남자</Text>
-          <Input
-            width="150px"
-            type="number"
-            {...props}
-            name="countMan"
-            value={man}
-          />
+          <Input width="150px" type="number" {...props} name="countMan" value={man} />
           <Text>여자</Text>
-          <Input
-            width="150px"
-            type="number"
-            {...props}
-            name="countWomen"
-            value={women}
-          />
+          <Input width="150px" type="number" {...props} name="countWomen" value={women} />
         </CustomWrapper>
+      );
+    }
+    case 'customMap': {
+      const { value, onChange, ...options } = props;
+      const [latitude, longitude, address] = value;
+
+      const { isLoading, error } = useScript(NAVER_MAP_SDK_URL);
+      const [isLoadingSubmodule, setIsLoadingSubmodule] = useState(true);
+
+      useEffect(() => {
+        if (isLoading || error) return;
+
+        naver.maps.onJSContentLoaded = () => {
+          setIsLoadingSubmodule(false);
+        };
+      }, [isLoading, error]);
+
+      useEffect(() => {
+        if (isLoadingSubmodule) return;
+
+        naver.maps.Service.reverseGeocode(
+          {
+            coords: new naver.maps.LatLng(latitude, longitude),
+            orders: naver.maps.Service.OrderType.ROAD_ADDR,
+          },
+          (status, response) => {
+            if (status === naver.maps.Service.Status.ERROR) return;
+            onChange({
+              target: {
+                name: 'address',
+                value: response.v2.address.roadAddress.replaceAll('  ', ' '),
+              },
+            });
+          },
+        );
+      }, [isLoadingSubmodule, latitude, longitude]);
+
+      return (
+        <CustomMapWrapper>
+          <Map {...options} latitude={latitude} longitude={longitude} src={NAVER_MAP_SDK_URL} />
+          <Text>{address}</Text>
+        </CustomMapWrapper>
       );
     }
     default:
@@ -344,4 +363,10 @@ const CustomWrapper = styled.div`
 
   gap: 8px;
   margin-top: ${({ $mt }) => $mt ?? '0px'};
+`;
+
+const CustomMapWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 `;
