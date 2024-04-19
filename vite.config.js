@@ -16,6 +16,10 @@ export default defineConfig({
         find: '@components',
         replacement: resolve(__dirname, '/src/components'),
       },
+      {
+        find: '@hooks',
+        replacement: resolve(__dirname, '/src/hooks'),
+      },
       { find: '@styles', replacement: resolve(__dirname, '/src/styles') },
       { find: '@utils', replacement: resolve(__dirname, '/src/utils') },
     ],
