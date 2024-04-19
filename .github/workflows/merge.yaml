@@ -27,6 +27,7 @@ jobs:
         env:
           VITE_BASE_API_URL: ${{ secrets.BASE_API_URL }}
           VITE_AUTH_API_URL: ${{ secrets.AUTH_API_URL }}
+          VITE_NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
 
       - name: Build
         run: yarn build
