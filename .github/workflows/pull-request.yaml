@@ -24,6 +24,8 @@ jobs:
       - name: Generate Environment Variables File
         run: |
           echo "VITE_BASE_API_URL=$VITE_BASE_API_URL" >> .env
+          echo "VITE_AUTH_API_URL=$VITE_AUTH_API_URL" >> .env
+          echo "VITE_NAVER_CLIENT_ID=$VITE_NAVER_CLIENT_ID" >> .env
         env:
           VITE_BASE_API_URL: ${{ secrets.BASE_API_URL }}
           VITE_AUTH_API_URL: ${{ secrets.AUTH_API_URL }}
