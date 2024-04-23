@@ -93,6 +93,12 @@ const ContainedButton = styled(BaseButton)`
   &:active {
     background-color: ${(props) => containedColor[props.$variant].active};
   }
+
+  &:disabled,
+  &:hover:disabled {
+    border: 1px solid rgba(0, 0, 0, 0.38);
+    background-color: rgba(0, 0, 0, 0.12);
+  }
 `;
 
 const outlinedColor = {
@@ -118,5 +124,11 @@ const OutlinedButton = styled(BaseButton)`
 
   &:active {
     background-color: ${(props) => outlinedColor[props.$variant].active};
+  }
+
+  &:disabled,
+  &:hover:disabled {
+    border: 1px solid rgba(0, 0, 0, 0.38);
+    background-color: rgba(0, 0, 0, 0.12);
   }
 `;
