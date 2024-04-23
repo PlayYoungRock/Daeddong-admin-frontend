@@ -13,31 +13,33 @@ export const LocationDetailPage = memo(() => {
 
   return (
     <Container>
-      <Text size="20px" lineHeight="24px" fontWeight="600">
-        {text.title}
-      </Text>
-      <FormContainer>
-        {fieldList.map(({ label, ...field }, i) => (
-          <FormWrapper key={`detail-location-field-${i}`}>
-            <LabelWrapper>
-              <Text size="16px" lineHeight="20px">
-                {label}
-              </Text>
-            </LabelWrapper>
-            <FieldWrapper>
-              <FieldItem {...field} onChange={handleOnChange} />
-            </FieldWrapper>
-          </FormWrapper>
-        ))}
-      </FormContainer>
-      <CustomWrapper $mt="20px">
-        <Button size="large" onClick={handleOnSubmit} disabled={isDisabledSubmitButton}>
-          {text.submitButton}
-        </Button>
-        <Button size="large" buttonType="outlined" onClick={handleGoList}>
-          취소
-        </Button>
-      </CustomWrapper>
+      <Wrapper>
+        <Text size="20px" lineHeight="24px" fontWeight="600">
+          {text.title}
+        </Text>
+        <FormContainer>
+          {fieldList.map(({ label, ...field }, i) => (
+            <FormWrapper key={`detail-location-field-${i}`}>
+              <LabelWrapper>
+                <Text size="16px" lineHeight="20px">
+                  {label}
+                </Text>
+              </LabelWrapper>
+              <FieldWrapper>
+                <FieldItem {...field} onChange={handleOnChange} />
+              </FieldWrapper>
+            </FormWrapper>
+          ))}
+        </FormContainer>
+        <FooterButtonWrapper>
+          <Button size="large" onClick={handleOnSubmit} disabled={isDisabledSubmitButton}>
+            {text.submitButton}
+          </Button>
+          <Button size="large" buttonType="outlined" onClick={handleGoList}>
+            취소
+          </Button>
+        </FooterButtonWrapper>
+      </Wrapper>
     </Container>
   );
 });
@@ -48,9 +50,14 @@ const Container = styled.div`
   overflow-y: auto;
 `;
 
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 80%;
+`;
+
 const FormContainer = styled.div`
-  margin-top: 20px;
-  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -60,17 +67,20 @@ const FormWrapper = styled.div`
   display: flex;
   align-items: center;
   gap: 20px;
-  padding: 8px;
 `;
 
 const LabelWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  min-width: 200px;
+  min-width: 150px;
 `;
 
 const FieldWrapper = styled.div`
-  flex: 1;
+  width: 100%;
+`;
+
+const FooterButtonWrapper = styled.div`
+  display: flex;
+  gap: 16px;
+  align-items: center;
 `;
 
 const FieldItem = memo(({ type, ...props }) => {
@@ -92,8 +102,8 @@ const FieldItem = memo(({ type, ...props }) => {
 
       return (
         <CustomWrapper>
-          <Input width="300px" type="time" {...props} name="openTime" value={open} />
-          <Input width="300px" type="time" {...props} name="closeTime" value={close} />
+          <Input type="time" {...props} name="openTime" value={open} />
+          <Input type="time" {...props} name="closeTime" value={close} />
         </CustomWrapper>
       );
     }
@@ -101,10 +111,10 @@ const FieldItem = memo(({ type, ...props }) => {
       const [man, women] = props.value;
       return (
         <CustomWrapper>
-          <Text>남자</Text>
-          <Input width="150px" type="number" {...props} name="countMan" value={man} />
-          <Text>여자</Text>
-          <Input width="150px" type="number" {...props} name="countWomen" value={women} />
+          <Text style={{ whiteSpace: 'nowrap' }}>남자</Text>
+          <Input type="number" {...props} name="countMan" value={man} />
+          <Text style={{ whiteSpace: 'nowrap' }}>여자</Text>
+          <Input type="number" {...props} name="countWomen" value={women} />
         </CustomWrapper>
       );
     }
@@ -158,9 +168,7 @@ const FieldItem = memo(({ type, ...props }) => {
 const CustomWrapper = styled.div`
   display: flex;
   align-items: center;
-
   gap: 8px;
-  margin-top: ${({ $mt }) => $mt ?? '0px'};
 `;
 
 const CustomMapWrapper = styled.div`
