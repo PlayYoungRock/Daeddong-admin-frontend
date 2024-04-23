@@ -1,6 +1,6 @@
 import HomePage from './HomePage';
 import ErrorPage from './ErrorPage';
-import LocationDetailPage from './LocationDetailPage';
+import { LocationDetailPage } from './LocationDetail';
 import { LocationListPage } from './LocationList';
 import SignInPage from './SignInPage';
 
