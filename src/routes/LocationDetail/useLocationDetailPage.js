@@ -1,8 +1,8 @@
 import { useCallback, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { TOILET_INFO, getToiletInfo } from '@utils';
+import { TOILET_INFO, getToiletInfo, postToiletInfo } from '@utils';
 
 import { HOME_PAGE, LOCATION_LIST_PAGE } from '../router';
 import { OPTION_LIST } from './constants';
@@ -11,6 +11,30 @@ export const useLocationDetailPage = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const { seq } = useParams();
+
+  useQuery([TOILET_INFO, seq], () => getToiletInfo(seq), {
+    enabled: !!seq,
+    onSuccess: ({ openTime, closeTime, unusualYn, ...data }) => {
+      setForm({
+        ...data,
+        openTime: openTime.split('~')[0],
+        closeTime: closeTime.split('~')[1] === '24:00' ? '00:00' : closeTime.split('~')[1],
+        unusualYn: !!unusualYn ? 'Y' : 'N',
+      });
+    },
+  });
+
+  const { mutate: createToilet, isLoading: isLoadingPostToiletInfo } = useMutation(
+    (form) => postToiletInfo(form),
+    {
+      onSuccess: ({ resultCode }) => {
+        if (resultCode === '0000') {
+          navigate(`${HOME_PAGE}${LOCATION_LIST_PAGE}`);
+        }
+      },
+      retry: 1,
+    },
+  );
 
   const text = useMemo(
     () => ({
@@ -124,19 +148,22 @@ export const useLocationDetailPage = () => {
     ],
     [form],
   );
-  // Script
+
+  const isDisabledSubmitButton = useMemo(
+    () =>
+      !form.name || !form.address || !form.latitude || !form.longitude || isLoadingPostToiletInfo,
+    [form.name, form.address, form.latitude, form.longitude, isLoadingPostToiletInfo],
+  );
+
   const handleOnChange = (e) => {
     const { name, value } = e.target;
     setForm((f) => ({ ...f, [name]: value }));
   };
 
-  const handleOnSubmit = useCallback(() => {
-    console.log(form);
-    if (seq) {
-      // TODO 수정api
-    }
-    // TODO 생성 api
-  }, [form, seq]);
+  const handleOnSubmit = useCallback(
+    () => (seq ? console.log(form) : createToilet(form)),
+    [form, seq, createToilet],
+  );
 
   const handleGoList = useCallback(() => {
     if (state?.previousUrl) {
@@ -145,23 +172,6 @@ export const useLocationDetailPage = () => {
     }
     navigate(`${HOME_PAGE}${LOCATION_LIST_PAGE}`);
   }, [state, navigate]);
-  // API
-  useQuery([TOILET_INFO, seq], () => getToiletInfo(seq), {
-    enabled: !!seq,
-    onSuccess: ({ openTime, closeTime, unusualYn, ...data }) => {
-      setForm({
-        ...data,
-        openTime: openTime.split('~')[0],
-        closeTime: closeTime.split('~')[1] === '24:00' ? '00:00' : closeTime.split('~')[1],
-        unusualYn: !!unusualYn ? 'Y' : 'N',
-      });
-    },
-  });
-
-  const isDisabledSubmitButton = useMemo(
-    () => !form.name || !form.address || !form.latitude || !form.longitude,
-    [form.name, form.address, form.latitude, form.longitude],
-  );
 
   return {
     text,
