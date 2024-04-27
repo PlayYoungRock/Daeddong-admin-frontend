@@ -1,9 +1,7 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect } from 'react';
 import styled from 'styled-components';
 
-import { NAVER_MAP_SDK_URL } from '@constants';
 import { Button, CheckBox, Input, Radio, Select, Text, Map } from '@components';
-import { useScript } from '@hooks';
 
 import { useLocationDetailPage } from './useLocationDetailPage';
 
@@ -119,22 +117,11 @@ const FieldItem = memo(({ type, ...props }) => {
       );
     }
     case 'customMap': {
-      const { value, onChange, ...options } = props;
+      const { value, onChange, isLoading, ...options } = props;
       const [latitude, longitude, address] = value;
 
-      const { isLoading, error } = useScript(NAVER_MAP_SDK_URL);
-      const [isLoadingSubmodule, setIsLoadingSubmodule] = useState(true);
-
       useEffect(() => {
-        if (isLoading || error) return;
-
-        naver.maps.onJSContentLoaded = () => {
-          setIsLoadingSubmodule(false);
-        };
-      }, [isLoading, error]);
-
-      useEffect(() => {
-        if (isLoadingSubmodule) return;
+        if (isLoading) return;
 
         naver.maps.Service.reverseGeocode(
           {
@@ -151,11 +138,13 @@ const FieldItem = memo(({ type, ...props }) => {
             });
           },
         );
-      }, [isLoadingSubmodule, latitude, longitude]);
+      }, [isLoading, latitude, longitude]);
+
+      if (isLoading) return null;
 
       return (
         <CustomMapWrapper>
-          <Map {...options} latitude={latitude} longitude={longitude} src={NAVER_MAP_SDK_URL} />
+          <Map {...options} latitude={latitude} longitude={longitude} />
           <Text>{address}</Text>
         </CustomMapWrapper>
       );

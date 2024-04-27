@@ -29,3 +29,22 @@ export const OPTION_LIST = {
     { label: '아니오', value: 'N' },
   ],
 };
+
+export const INITIAL_FORM = {
+  name: '',
+  address: '',
+  latitude: 37.3595704,
+  longitude: 127.105399,
+  openTime: '00:00',
+  closeTime: '23:59',
+  toiletType: '',
+  countMan: '',
+  countWomen: '',
+  babyYn: 'N',
+  unusualYn: 'N',
+  cctvYn: 'N',
+  alarmYn: 'N',
+  pwdYn: 'N',
+  etc: '',
+  openYn: 'N',
+};

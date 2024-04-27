@@ -1,40 +1,43 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
-
-import { Text } from '../Text';
-
 import { useScript } from '@hooks';
+import { NAVER_MAP_SDK_URL } from '@constants';
 
-export const Map = memo(({ src, latitude, longitude, onClick }) => {
-  const { isLoading, error } = useScript(src ?? '');
+export const Map = memo(({ latitude, longitude, onClick }) => {
+  const [isLoading] = useScript({ src: NAVER_MAP_SDK_URL, checkForExisting: true });
 
+  const [isFirstRender, setIsFirstRender] = useState(true);
+  const map = useRef(null);
+
+  // 초기 렌더링을 담당한다.
   useEffect(() => {
-    if (isLoading || error || !naver.maps) return;
+    if (!isFirstRender || isLoading) return;
 
-    const map = new naver.maps.Map('map', {
+    map.current = new naver.maps.Map('map', {
       center: new naver.maps.LatLng(latitude, longitude),
       zoom: 17,
     });
 
+    setIsFirstRender(false);
+  }, [isLoading, isFirstRender, latitude, longitude]);
+
+  useEffect(() => {
+    if (isFirstRender || isLoading) return;
+
     const marker = new naver.maps.Marker({
       position: new naver.maps.LatLng(latitude, longitude),
-      map: map,
+      map: map.current,
     });
 
-    const listener = naver.maps.Event.addListener(map, 'click', (e) => onClick(e.coord));
+    const listener = naver.maps.Event.addListener(map.current, 'click', (e) => onClick(e.coord));
 
     return () => {
       naver.maps.Event.removeListener(listener);
       marker.setMap(null);
     };
-  }, [isLoading, error, onClick]);
+  }, [isLoading, isFirstRender, latitude, longitude, onClick]);
 
-  if (isLoading)
-    return (
-      <Container>
-        <Text>naver 지도 불러오는중..</Text>
-      </Container>
-    );
+  if (isLoading) return null;
 
   return <Container id="map" />;
 });
