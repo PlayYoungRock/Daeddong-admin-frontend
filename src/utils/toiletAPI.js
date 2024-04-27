@@ -6,6 +6,7 @@ export const SI_DO_LIST = 'sidoList';
 export const SI_GUN_GU_LIST = 'sigunguList';
 export const TOILET_INFO = 'toiletInfo';
 export const INSERT_TOILET = 'insertToilet';
+export const UPDATE_TOILET = 'updateToilet';
 
 export const getSidoList = async () => {
   const { data } = await Http.get(`${SI_DO_LIST}`);
@@ -32,7 +33,13 @@ export const getToiletInfo = async (id) => {
 };
 
 export const postToiletInfo = async (body) => {
-  const { data } = await authHttp.post(`${TOILET}/${INSERT_TOILET}`, { body });
+  const { data } = await authHttp.post(`${TOILET}/${INSERT_TOILET}`, body);
+
+  return data;
+};
+
+export const patchToiletInfo = async (body) => {
+  const { data } = await authHttp.patch(`${TOILET}/${UPDATE_TOILET}`, body);
 
   return data;
 };
