@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { TOILET_INFO, getToiletInfo, postToiletInfo } from '@utils';
+import { TOILET_INFO, getToiletInfo, postToiletInfo, patchToiletInfo } from '@utils';
 import { useScript } from '@hooks';
 import { NAVER_MAP_SDK_URL } from '@constants';
 
@@ -25,7 +25,15 @@ export const useLocationDetailPage = () => {
   }, [isLoadingNaverMapSDK]);
 
   const [form, setForm] = useState(null);
-  useQuery([TOILET_INFO, seq], () => getToiletInfo(seq), {
+
+  // NOTE 화장실 정보 세팅 로직 생성
+  useEffect(() => {
+    if (seq) return;
+    setForm(INITIAL_FORM);
+  }, [seq]);
+
+  // NOTE 화장실 정보 세팅 로직 수정
+  const { refetch: refetchToiletInfo } = useQuery([TOILET_INFO, seq], () => getToiletInfo(seq), {
     enabled: !!seq,
     onSuccess: ({ openTime, closeTime, unusualYn, ...data }) => {
       setForm({
@@ -37,22 +45,28 @@ export const useLocationDetailPage = () => {
     },
   });
 
-  useEffect(() => {
-    if (seq) return;
-    setForm(INITIAL_FORM);
-  }, [seq]);
-
   const { mutate: createToilet, isLoading: isLoadingPostToiletInfo } = useMutation(
     (form) => postToiletInfo(form),
     {
       onSuccess: ({ resultCode }) => {
         if (resultCode === '0000') {
+          alert('생성이 완료되었습니다.');
           navigate(`${HOME_PAGE}${LOCATION_LIST_PAGE}`);
         }
       },
       retry: 1,
     },
   );
+
+  const { mutate: updateToilet } = useMutation((form) => patchToiletInfo(form), {
+    onSuccess: ({ resultCode }) => {
+      if (resultCode === '0000') {
+        alert('수정이 완료되었습니다.');
+        refetchToiletInfo();
+      }
+    },
+    retry: 1,
+  });
 
   const text = useMemo(
     () => ({
@@ -166,8 +180,8 @@ export const useLocationDetailPage = () => {
   };
 
   const handleOnSubmit = useCallback(
-    () => (seq ? console.log(form) : createToilet(form)),
-    [form, seq, createToilet],
+    () => (seq ? updateToilet({ ...form, seq }) : createToilet(form)),
+    [form, seq, createToilet, updateToilet],
   );
 
   const handleGoList = useCallback(() => {
