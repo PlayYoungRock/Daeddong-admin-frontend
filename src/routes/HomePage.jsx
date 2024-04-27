@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { ADMIN_LIST_PAGE, HOME_PAGE, LOCATION_LIST_PAGE, SIGN_IN_PAGE } from './router';
 import { Text } from '@components';
