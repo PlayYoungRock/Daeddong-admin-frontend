@@ -2,7 +2,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQuery } from '@tanstack/react-query';
 
-import { TOILET_INFO, getToiletInfo, postToiletInfo, patchToiletInfo } from '@utils';
+import {
+  TOILET_INFO,
+  getToiletInfo,
+  postToiletInfo,
+  patchToiletInfo,
+  deleteToiletInfo,
+} from '@utils';
 import { useScript } from '@hooks';
 import { NAVER_MAP_SDK_URL } from '@constants';
 
@@ -63,6 +69,16 @@ export const useLocationDetailPage = () => {
       if (resultCode === '0000') {
         alert('수정이 완료되었습니다.');
         refetchToiletInfo();
+      }
+    },
+    retry: 1,
+  });
+
+  const { mutate: deleteToilet } = useMutation((id) => deleteToiletInfo(id), {
+    onSuccess: ({ resultCode }) => {
+      if (resultCode === '0000') {
+        alert('삭제가 완료되었습니다.');
+        navigate(`${HOME_PAGE}${LOCATION_LIST_PAGE}`);
       }
     },
     retry: 1,
@@ -174,11 +190,6 @@ export const useLocationDetailPage = () => {
     [form, isLoadingPostToiletInfo],
   );
 
-  const handleOnChange = (e) => {
-    const { name, value } = e.target;
-    setForm((f) => ({ ...f, [name]: value }));
-  };
-
   const handleOnSubmit = useCallback(
     () => (seq ? updateToilet({ ...form, seq }) : createToilet(form)),
     [form, seq, createToilet, updateToilet],
@@ -192,12 +203,39 @@ export const useLocationDetailPage = () => {
     navigate(`${HOME_PAGE}${LOCATION_LIST_PAGE}`);
   }, [state, navigate]);
 
+  const buttonList = useMemo(() => {
+    const createButton = [
+      {
+        size: 'large',
+        disabled: isDisabledSubmitButton,
+        onClick: handleOnSubmit,
+        children: text.submitButton,
+      },
+      { size: 'large', buttonType: 'outlined', onClick: handleGoList, children: '취소' },
+    ];
+
+    return seq
+      ? [
+          {
+            size: 'large',
+            variant: 'error',
+            onClick: () => deleteToilet(seq),
+            children: '삭제',
+          },
+          ...createButton,
+        ]
+      : createButton;
+  }, [isDisabledSubmitButton, seq, handleOnSubmit, handleGoList, deleteToilet]);
+
+  const handleOnChange = (e) => {
+    const { name, value } = e.target;
+    setForm((f) => ({ ...f, [name]: value }));
+  };
+
   return {
     text,
     fieldList,
-    isDisabledSubmitButton,
+    buttonList,
     handleOnChange,
-    handleOnSubmit,
-    handleGoList,
   };
 };

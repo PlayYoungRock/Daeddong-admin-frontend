@@ -7,6 +7,7 @@ export const SI_GUN_GU_LIST = 'sigunguList';
 export const TOILET_INFO = 'toiletInfo';
 export const INSERT_TOILET = 'insertToilet';
 export const UPDATE_TOILET = 'updateToilet';
+export const DELETE_TOILET = 'deleteToilet';
 
 export const getSidoList = async () => {
   const { data } = await Http.get(`${SI_DO_LIST}`);
@@ -40,6 +41,12 @@ export const postToiletInfo = async (body) => {
 
 export const patchToiletInfo = async (body) => {
   const { data } = await authHttp.patch(`${TOILET}/${UPDATE_TOILET}`, body);
+
+  return data;
+};
+
+export const deleteToiletInfo = async (id) => {
+  const { data } = await authHttp.delete(`${TOILET}/${DELETE_TOILET}?seq=${id}`);
 
   return data;
 };

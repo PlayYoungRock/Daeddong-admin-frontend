@@ -6,8 +6,7 @@ import { Button, CheckBox, Input, Radio, Select, Text, Map } from '@components';
 import { useLocationDetailPage } from './useLocationDetailPage';
 
 export const LocationDetailPage = memo(() => {
-  const { text, fieldList, isDisabledSubmitButton, handleOnChange, handleOnSubmit, handleGoList } =
-    useLocationDetailPage();
+  const { text, fieldList, buttonList, handleOnChange } = useLocationDetailPage();
 
   return (
     <Container>
@@ -30,12 +29,9 @@ export const LocationDetailPage = memo(() => {
           ))}
         </FormContainer>
         <FooterButtonWrapper>
-          <Button size="large" onClick={handleOnSubmit} disabled={isDisabledSubmitButton}>
-            {text.submitButton}
-          </Button>
-          <Button size="large" buttonType="outlined" onClick={handleGoList}>
-            취소
-          </Button>
+          {buttonList.map((props, i) => (
+            <Button key={`detail-location-footer-button-${i}`} {...props} />
+          ))}
         </FooterButtonWrapper>
       </Wrapper>
     </Container>
