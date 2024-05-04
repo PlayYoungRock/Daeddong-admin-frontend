@@ -75,7 +75,14 @@ authInstance.interceptors.request.use(
 );
 
 authInstance.interceptors.response.use(
-  (res) => res,
+  (res) => {
+    if (res.data.resultCode === '8001' || res.data.resultCode === '8000') {
+      alert('토큰이 만료 또는 없습니다. 재로그인해주세요.');
+      localStorage.removeItem(ADMIN_TOKEN);
+      return Promise.reject(new Error(res.data.resultCode));
+    }
+    return res;
+  },
   (error) => {
     if (isAxiosError(error) && !!error.response) {
       switch (error.response.status) {
